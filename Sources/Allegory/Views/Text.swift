@@ -4,7 +4,7 @@
 
 import UIKit
 
-public struct Text: View, Equatable {
+public struct Text: View, Hashable {
 
     public typealias Body = Swift.Never
 
