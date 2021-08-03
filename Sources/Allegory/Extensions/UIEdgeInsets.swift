@@ -13,4 +13,13 @@ extension EdgeInsets {
             trailing: Double(insets.right)
         )
     }
+
+    internal var uiEdgeInsets: UIEdgeInsets {
+        UIEdgeInsets(
+            top: top.cgFloat,
+            left: left.cgFloat,
+            bottom: bottom.cgFloat,
+            right: right.cgFloat
+        )
+    }
 }

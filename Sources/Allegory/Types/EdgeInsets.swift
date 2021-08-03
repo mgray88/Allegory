@@ -2,7 +2,7 @@
 // Created by Mike on 6/15/21.
 //
 
-public struct EdgeInsets {
+public struct EdgeInsets: Hashable {
     public var top: Double
     public var left: Double
     public var bottom: Double
