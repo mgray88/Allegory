@@ -14,8 +14,17 @@ Pod::Spec.new do |spec|
   spec.author       = { "Mike Gray" => "mgray88@gmail.com" }
   spec.platform     = :ios, "10.0"
   spec.source       = { :git => "http://github.com/mgray88/Allegory.git", :tag => "#{spec.version}" }
-  spec.source_files  = "Sources/Allegory"
+  spec.source_files  = "Sources"
+  spec.swift_versions = "5.4"
 
   spec.dependency "RxSwift", "~> 6.2"
+
+  spec.subspec "Core" do |allegory|
+    allegory.source_files = "Sources/Allegory"
+  end
+
+  spec.subspec "Identifiable" do |identifiable|
+    identifiable.source_files = "Sources/Identifiable"
+  end
 
 end
