@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "Allegory"
-  spec.version      = "0.0.1"
+  spec.version      = "0.0.2"
   spec.summary      = "SwiftUI with UIKit"
   spec.description  = <<-DESC
   Brief reimplementation of SwiftUI using UIKit under the hood to bring
