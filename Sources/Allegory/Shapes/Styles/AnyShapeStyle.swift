@@ -8,7 +8,7 @@ public struct AnyShapeStyle: ShapeStyle {
     private let style: ShapeStyle
 
     /// Create an instance from `style`.
-    public init<S>(_ style: S) where S : ShapeStyle {
+    public init<S>(_ style: S) where S: ShapeStyle {
         self.style = style
     }
 

@@ -15,10 +15,9 @@ extension Shape {
     public func fill<S>(
         _ content: S,
         style: FillStyle = FillStyle()
-    ) -> _ShapeView<Self, S> where S : ShapeStyle {
+    ) -> _ShapeView<Self, S> where S: ShapeStyle {
         _ShapeView(shape: self, style: content)
     }
-
 
     /// Fills this shape with the foreground color.
     ///
