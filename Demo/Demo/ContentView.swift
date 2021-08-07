@@ -12,6 +12,9 @@ import SwiftUI
 struct Sample: Allegory.View {
     var body: SomeView {
         Allegory.Ellipse()
+        Allegory.Image("")
+            .resizable()
+            .scaledToFit()
     }
 }
 

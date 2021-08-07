@@ -31,8 +31,8 @@ extension AnyView: UIKitNodeResolvable {
             node = view.view.resolve(context: context, cachedNode: node)
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
-            node.layoutSize(fitting: targetSize, pass: pass)
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+            node.layoutSize(fitting: proposedSize, pass: pass)
         }
 
         func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {

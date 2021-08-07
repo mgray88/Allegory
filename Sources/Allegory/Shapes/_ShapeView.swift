@@ -45,8 +45,8 @@ extension _ShapeView: UIKitNodeResolvable {
             }
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
-            targetSize
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+            proposedSize.orDefault
         }
 
         func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {

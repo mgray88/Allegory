@@ -23,6 +23,14 @@ extension View {
     ) -> ModifiedContent<Self, ViewModifiers._Background<Background>> {
         modifier(.init(background: background))
     }
+
+    @inlinable
+    public func background<V: View>(
+        alignment: Alignment = .center,
+        @ViewBuilder content: () -> V
+    ) -> ModifiedContent<Self, ViewModifiers._Background<V>> {
+        modifier(.init(background: content()))
+    }
 }
 
 extension ViewModifiers._Background: UIKitNodeModifierResolvable {

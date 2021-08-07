@@ -23,36 +23,44 @@ extension LayoutAlgorithms {
         }
 
         /// Calculate the stack geometry fitting `targetSize` and aligned by `alignment`.
-        internal func contentLayout(
-            fittingSize targetSize: CGSize,
-            pass: LayoutPass
-        ) -> ContentGeometry {
-            var idealSize = targetSize
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> ContentGeometry {
+            var proposedSize = ProposedSize(
+                width: proposedSize.width ?? modifier.idealWidth,
+                height: proposedSize.height ?? modifier.idealHeight
+            ).orDefault
 
-            if let minWidth = modifier.minWidth {
-                idealSize.width = max(idealSize.width, minWidth)
+            if let minWidth = modifier.minWidth, minWidth > proposedSize.width {
+                proposedSize.width = minWidth
             }
-            if let maxWidth = modifier.maxWidth {
-                idealSize.width = min(idealSize.width, maxWidth)
+            if let maxWidth = modifier.maxWidth, maxWidth < proposedSize.width {
+                proposedSize.width = maxWidth
             }
-            if let minHeight = modifier.minHeight {
-                idealSize.height = max(idealSize.height, minHeight)
+            if let minHeight = modifier.minHeight, minHeight > proposedSize.height {
+                proposedSize.height = minHeight
             }
-            if let maxHeight = modifier.maxHeight {
-                idealSize.height = min(idealSize.height, maxHeight)
+            if let maxHeight = modifier.maxHeight, maxHeight < proposedSize.height {
+                proposedSize.height = maxHeight
             }
 
-            var size = node.layoutSize(fitting: idealSize, pass: pass)
-            size.width = clamp(idealSize.width, min: modifier.minWidth ?? size.width, max: modifier.maxWidth ?? size.width)
-            size.height = clamp(idealSize.height, min: modifier.minHeight ?? size.height, max: modifier.maxHeight ?? size.height)
+            var size = node.layoutSize(fitting: ProposedSize(proposedSize), pass: pass)
+            size.width = clamp(
+                proposedSize.width,
+                min: modifier.minWidth ?? size.width,
+                max: modifier.maxWidth ?? size.width
+            )
+            size.height = clamp(
+                proposedSize.height,
+                min: modifier.minHeight ?? size.height,
+                max: modifier.maxHeight ?? size.height
+            )
 
             let rect: CGRect
 
             switch modifier.alignment {
             case .center:
                 rect = CGRect(
-                    x: (idealSize.width - size.width) / 2,
-                    y: (idealSize.height - size.height) / 2,
+                    x: (proposedSize.width - size.width) / 2,
+                    y: (proposedSize.height - size.height) / 2,
                     width: size.width,
                     height: size.height
                 )
@@ -60,16 +68,16 @@ extension LayoutAlgorithms {
             case .leading:
                 rect = CGRect(
                     x: 0,
-                    y: (idealSize.height - size.height) / 2,
+                    y: (proposedSize.height - size.height) / 2,
                     width: size.width,
                     height: size.height
                 )
 
             default:
-                fatalError("TODO")
+                TODO()
             }
 
-            return ContentGeometry(idealSize: idealSize, frames: [rect])
+            return ContentGeometry(idealSize: proposedSize, frames: [rect])
         }
     }
 }

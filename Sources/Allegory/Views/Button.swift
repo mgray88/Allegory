@@ -90,7 +90,7 @@ extension Button where Label == Text {
         _ title: S,
         role: ButtonRole?,
         action: @escaping () -> Void
-    ) where S : StringProtocol {
+    ) where S: StringProtocol {
         self.role = role
         self.action = action
         self.label = Text(title)
@@ -98,9 +98,7 @@ extension Button where Label == Text {
 }
 
 extension Button: UIKitNodeResolvable {
-
     private class Node: UIKitNode {
-
         var hierarchyIdentifier: String {
             "Button<\(label.hierarchyIdentifier)>"
         }
@@ -120,8 +118,8 @@ extension Button: UIKitNodeResolvable {
             control.tappedHandler = view.action
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
-            label.layoutSize(fitting: targetSize, pass: pass)
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+            label.layoutSize(fitting: proposedSize, pass: pass)
         }
 
         func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
@@ -155,40 +153,29 @@ extension Button {
             addTarget(self, action: #selector(unhighlight), for: .touchCancel)
         }
 
-        required init?(coder: NSCoder) {
+        @available(*, unavailable)
+        public required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
 
-        @objc dynamic private func unhighlight() {
-            if #available(iOS 10.0, *) {
-                UIViewPropertyAnimator.runningPropertyAnimator(
-                    withDuration: 0.1,
-                    delay: 0,
-                    options: [],
-                    animations: { self.alpha = 1 },
-                    completion: nil
-                )
-            } else {
-                UIView.animate(withDuration: 0.1) {
-                    self.alpha = 1
-                }
-            }
+        @objc private dynamic func unhighlight() {
+            UIViewPropertyAnimator.runningPropertyAnimator(
+                withDuration: 0.1,
+                delay: 0,
+                options: [],
+                animations: { self.alpha = 1 },
+                completion: nil
+            )
         }
 
-        @objc dynamic private func highlight() {
-            if #available(iOS 10.0, *) {
-                UIViewPropertyAnimator.runningPropertyAnimator(
-                    withDuration: 0.1,
-                    delay: 0,
-                    options: [],
-                    animations: { self.alpha = 0.5 },
-                    completion: nil
-                )
-            } else {
-                UIView.animate(withDuration: 0.1) {
-                    self.alpha = 0.5
-                }
-            }
+        @objc private dynamic func highlight() {
+            UIViewPropertyAnimator.runningPropertyAnimator(
+                withDuration: 0.1,
+                delay: 0,
+                options: [],
+                animations: { self.alpha = 0.5 },
+                completion: nil
+            )
         }
 
         @objc func tapped() {

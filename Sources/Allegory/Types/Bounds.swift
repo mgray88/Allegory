@@ -80,3 +80,9 @@ extension Bounds {
         )
     }
 }
+
+extension Bounds {
+    var proposedSize: ProposedSize {
+        ProposedSize(size)
+    }
+}

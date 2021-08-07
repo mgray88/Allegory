@@ -66,7 +66,6 @@ public struct ScrollView<Content>: View where Content: View {
         self.showsIndicators = showsIndicators
         self.content = content()
     }
-
 }
 
 extension ScrollView: UIKitNodeResolvable {
@@ -92,22 +91,22 @@ extension ScrollView: UIKitNodeResolvable {
             scrollView.alwaysBounceHorizontal = view.axes.contains(.horizontal)
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             if axes == [.horizontal, .vertical] {
-                return targetSize
+                return proposedSize.orMax
             } else if axes == [.vertical] {
                 var size = content.layoutSize(
-                    fitting: .init(width: targetSize.width, height: 0),
+                    fitting: .init(width: proposedSize.width, height: 0),
                     pass: pass
                 )
-                size.height = targetSize.height
+                size.height = proposedSize.orDefault.height
                 return size
             } else if axes == [.horizontal] {
                 var size = content.layoutSize(
-                    fitting: .init(width: 0, height: targetSize.height),
+                    fitting: .init(width: 0, height: proposedSize.height),
                     pass: pass
                 )
-                size.width = targetSize.width
+                size.width = proposedSize.orDefault.width
                 return size
             } else {
                 fatalError()
@@ -115,7 +114,10 @@ extension ScrollView: UIKitNodeResolvable {
         }
 
         func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
-            let contentSize = content.layoutSize(fitting: bounds.size, pass: pass)
+            let contentSize = content.layoutSize(
+                fitting: bounds.proposedSize,
+                pass: pass
+            )
             scrollView.frame = bounds.rect
             scrollView.contentSize = contentSize
             container.view.addSubview(scrollView)
@@ -125,7 +127,6 @@ extension ScrollView: UIKitNodeResolvable {
                 pass: pass
             )
         }
-
     }
 
     func resolve(context: Context, cachedNode: SomeUIKitNode?) -> SomeUIKitNode {

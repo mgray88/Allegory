@@ -25,8 +25,8 @@ extension Optional: UIKitNodeResolvable where Wrapped: SomeView {
             node = view.map { $0.resolve(context: context, cachedNode: node) }
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
-            node?.layoutSize(fitting: targetSize, pass: pass) ?? .zero
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+            node?.layoutSize(fitting: proposedSize, pass: pass) ?? .zero
         }
 
         func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {

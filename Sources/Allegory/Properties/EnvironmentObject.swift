@@ -54,12 +54,10 @@ public struct EnvironmentObject<ObjectType>: EnvironmentObjectProperty
         public subscript<Subject>(
             dynamicMember keyPath: ReferenceWritableKeyPath<ObjectType, Subject>
         ) -> Binding<Subject> {
-            get {
-                Binding(
-                    get: { _get()[keyPath: keyPath] },
-                    set: { _get()[keyPath: keyPath] = $0 }
-                )
-            }
+            Binding(
+                get: { _get()[keyPath: keyPath] },
+                set: { _get()[keyPath: keyPath] = $0 }
+            )
         }
     }
 
@@ -71,7 +69,7 @@ public struct EnvironmentObject<ObjectType>: EnvironmentObjectProperty
 
     public var wrappedValue: ObjectType {
         get {
-            return storage.get() as! ObjectType
+            storage.get() as! ObjectType
         }
         set {
             storage.set(newValue)

@@ -41,21 +41,26 @@ extension LayoutAlgorithms {
         }
 
         /// Calculate the stack geometry fitting `targetSize` and aligned by `alignment`.
-        internal func contentLayout(fittingSize targetSize: CGSize, pass: LayoutPass) -> ContentGeometry {
-            if let geometry = cache.geometry(for: pass, size: targetSize) {
+        func layoutSize(
+            fitting proposedSize: ProposedSize,
+            pass: LayoutPass
+        ) -> ContentGeometry {
+            if let geometry = cache.geometry(
+                for: pass,
+                size: proposedSize.orDefault
+            ) {
                 return geometry
             }
 
             let epsilon: CGFloat = 0.0000001
-            let availableHeight = targetSize.height
+            let availableHeight = proposedSize.orDefault.height
             var frames = Array(repeating: CGRect.zero, count: nodes.count)
 
-            let sortedNodes = nodes.enumerated().sorted { (lhs, rhs) -> Bool in
+            let sortedNodes = nodes.enumerated().sorted { lhs, rhs -> Bool in
                 lhs.element.layoutPriority > rhs.element.layoutPriority
             }
 
             struct PriorityGroup {
-
                 struct Item {
                     let index: Int
                     let node: LayoutNode
@@ -72,8 +77,9 @@ extension LayoutAlgorithms {
                 var minWidth: CGFloat
             }
 
-            let minSize = CGSize(width: 0, height: targetSize.height)
-            var priorityGroups = sortedNodes.reduce(into: [PriorityGroup]()) { (result, pair) in
+            var minSize = proposedSize
+            minSize.width = 0
+            var priorityGroups = sortedNodes.reduce(into: [PriorityGroup]()) { result, pair in
                 let size = pair.element.layoutSize(fitting: minSize, pass: pass)
                 let item = PriorityGroup.Item(
                     index: pair.offset,
@@ -96,12 +102,12 @@ extension LayoutAlgorithms {
                         PriorityGroup(items: [item], priority: item.node.layoutPriority, minWidth: item.minSize.width)
                     )
                 } else {
-                    result[result.count-1].items.append(item)
-                    result[result.count-1].minWidth += item.minSize.width
+                    result[result.count - 1].items.append(item)
+                    result[result.count - 1].minWidth += item.minSize.width
                 }
             }
 
-            let numberOfJunctions = nodes.reduce((count: 0, prevNode: LayoutNode?.none)) { (memo, node) in
+            let numberOfJunctions = nodes.reduce((count: 0, prevNode: LayoutNode?.none)) { memo, node in
                 guard let prevNode = memo.prevNode else { return (memo.count, node) }
                 if prevNode.isSpacer || node.isSpacer {
                     return (memo.count, node)
@@ -112,9 +118,9 @@ extension LayoutAlgorithms {
 
             let minimalRequiredWidth = priorityGroups.reduce(0) { $0 + $1.minWidth }
             let totalRequiredSpacing = CGFloat(numberOfJunctions) * interItemSpacing
-            var availableWidth = targetSize.width - totalRequiredSpacing - minimalRequiredWidth
+            var availableWidth = proposedSize.width ?? 0 - totalRequiredSpacing - minimalRequiredWidth
 
-            priorityGroups.mutableForEach { (priorityGroup) in
+            priorityGroups.mutableForEach { priorityGroup in
                 // We'll be calculating new width of this group, so restore previously added minimum width
                 availableWidth += priorityGroup.minWidth
                 var groupWidth: CGFloat = 0
@@ -122,8 +128,14 @@ extension LayoutAlgorithms {
                 let widthToSuggest = availableWidth / numberOfItemsInGroup
 
                 // Calculate nodes' sizes
-                priorityGroup.items.mutableForEach { (item) in
-                    let nodeSize = item.node.layoutSize(fitting: CGSize(width: widthToSuggest, height: availableHeight), pass: pass)
+                priorityGroup.items.mutableForEach { item in
+                    let nodeSize = item.node.layoutSize(
+                        fitting: ProposedSize(
+                            width: widthToSuggest,
+                            height: availableHeight
+                        ),
+                        pass: pass
+                    )
                     item.size = nodeSize
                     item.needsHeightUpdate = false
                     item.isShrinkable = nodeSize.width < widthToSuggest + epsilon
@@ -157,11 +169,17 @@ extension LayoutAlgorithms {
             if availableWidth > epsilon {
                 for (index, var priorityGroup) in priorityGroups.enumerated().reversed() {
                     while availableWidth > epsilon {
-                        priorityGroup.items.mutableForEach { (item) in
+                        priorityGroup.items.mutableForEach { item in
                             guard item.isExpandable else {
                                 return // break
                             }
-                            item.maxSize = item.node.layoutSize(fitting: CGSize(width: item.size.width + availableWidth, height: availableHeight), pass: pass)
+                            item.maxSize = item.node.layoutSize(
+                                fitting: ProposedSize(
+                                    width: item.size.width + availableWidth,
+                                    height: availableHeight
+                                ),
+                                pass: pass
+                            )
                             item.isExpandable = item.maxSize.width > item.size.width + epsilon
                         }
                         let expandableNodes = priorityGroup.items.enumerated().filter { $0.element.isExpandable }
@@ -171,8 +189,11 @@ extension LayoutAlgorithms {
                         let expansionToSuggest = availableWidth / CGFloat(expandableNodes.count)
                         var numberOfExpansions = 0
                         for (index, var item) in expandableNodes {
-                            let targetSize = CGSize(width: item.size.width + expansionToSuggest, height: availableHeight)
-                            let nodeSize = item.node.layoutSize(fitting: targetSize, pass: pass)
+                            let proposedSize = ProposedSize(
+                                width: item.size.width + expansionToSuggest,
+                                height: availableHeight
+                            )
+                            let nodeSize = item.node.layoutSize(fitting: proposedSize, pass: pass)
                             let expandedWidth = nodeSize.width - item.size.width
                             item.size = nodeSize
                             item.needsHeightUpdate = false
@@ -192,7 +213,7 @@ extension LayoutAlgorithms {
 
             // Distribute any remaining space among spacers
             if availableWidth > epsilon {
-                priorityGroups.mutableForEach { (priorityGroup) in
+                priorityGroups.mutableForEach { priorityGroup in
                     let spacers = priorityGroup.items.enumerated().filter { $0.element.node.isSpacer }
                     let widthToAdd = availableWidth / CGFloat(spacers.count)
                     for (index, _) in spacers {
@@ -206,11 +227,14 @@ extension LayoutAlgorithms {
             }
 
             // Update frames
-            priorityGroups.mutableForEach { (priorityGroup) in
-                priorityGroup.items.mutableForEach { (item) in
+            priorityGroups.mutableForEach { priorityGroup in
+                priorityGroup.items.mutableForEach { item in
                     if item.needsHeightUpdate {
-                        let targetSize = CGSize(width: item.size.width, height: availableHeight)
-                        item.size = item.node.layoutSize(fitting: targetSize, pass: pass) // Will this override width?
+                        let proposedSize = ProposedSize(
+                            width: item.size.width,
+                            height: availableHeight
+                        )
+                        item.size = item.node.layoutSize(fitting: proposedSize, pass: pass) // Will this override width?
                     }
                     frames[item.index].size = item.size
                 }
@@ -257,7 +281,7 @@ extension LayoutAlgorithms {
                 idealSize: fittingSize.roundedToScale(scale: screenScale),
                 frames: frames
             )
-            cache.update(pass: pass, size: targetSize, geometry: geometry)
+            cache.update(pass: pass, size: proposedSize.orDefault, geometry: geometry)
             return geometry
         }
     }

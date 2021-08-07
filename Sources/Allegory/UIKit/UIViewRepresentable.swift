@@ -68,7 +68,7 @@ public struct UIViewRepresentableContext<Representable> where Representable: UIV
 }
 
 extension UIViewRepresentable where Coordinator == Void {
-    public func makeCoordinator() -> Void {
+    public func makeCoordinator() {
     }
 }
 
@@ -111,9 +111,9 @@ class UIViewRepresentableNode: SomeUIKitNode {
         }
     }
 
-    func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
+    func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
         let size = uiView.intrinsicContentSize
-        return max(size, targetSize)
+        return max(size, proposedSize.orMax)
     }
 
     func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {

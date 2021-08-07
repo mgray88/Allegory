@@ -3,8 +3,7 @@
 //
 
 /// A value with a modifier applied to it.
-public struct ModifiedContent<Content, Modifier>: View
-    where Content: View, Modifier: ViewModifier {
+public struct ModifiedContent<Content, Modifier> {
 
     public typealias Body = Swift.Never
 
@@ -31,6 +30,18 @@ public struct ModifiedContent<Content, Modifier>: View
     }
 }
 
+extension ModifiedContent: View, SomeView
+    where Content: View, Modifier: ViewModifier {
+
+    public var body: ModifiedContent<Content, Modifier>.Body {
+        fatalError("body has not been implemented")
+    }
+}
+
+extension ModifiedContent: ViewModifier, SomeViewModifier
+    where Content: ViewModifier, Modifier: ViewModifier {
+}
+
 extension ModifiedContent: Equatable
     where Content: Equatable, Modifier: Equatable {}
 
@@ -42,10 +53,10 @@ extension View {
     }
 }
 
-extension ModifiedContent: UIKitNodeResolvable {
+extension ModifiedContent: UIKitNodeResolvable
+    where Content: View, Modifier: ViewModifier {
 
-    private class Node: UIKitNode {
-
+    private class ViewNode: UIKitNode {
         var hierarchyIdentifier: String {
             "ModifiedContent<\(contentNode.hierarchyIdentifier), \(contentNodeModifier?.hierarchyIdentifier ?? "Never")>"
         }
@@ -70,11 +81,11 @@ extension ModifiedContent: UIKitNodeResolvable {
             }
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             if let contentNodeModifier = contentNodeModifier {
-                return contentNodeModifier.layoutSize(fitting: targetSize, pass: pass,  node: contentNode)
+                return contentNodeModifier.layoutSize(fitting: proposedSize, pass: pass, node: contentNode)
             } else {
-                return contentNode.layoutSize(fitting: targetSize, pass: pass)
+                return contentNode.layoutSize(fitting: proposedSize, pass: pass)
             }
         }
 
@@ -85,10 +96,39 @@ extension ModifiedContent: UIKitNodeResolvable {
                 contentNode.layout(in: container, bounds: bounds, pass: pass)
             }
         }
-
     }
 
     func resolve(context: Context, cachedNode: SomeUIKitNode?) -> SomeUIKitNode {
-        (cachedNode as? Node) ?? Node()
+        (cachedNode as? ViewNode) ?? ViewNode()
+    }
+}
+
+extension ModifiedContent: UIKitNodeModifierResolvable
+    where Content: ViewModifier, Modifier: ViewModifier {
+
+    private class ModifierNode: UIKitNodeModifier {
+        var hierarchyIdentifier: String {
+            ""
+        }
+
+        var viewModifier: ModifiedContent<Content, Modifier>!
+
+        func update(
+            viewModifier: ModifiedContent<Content, Modifier>,
+            context: inout Context
+        ) {
+            self.viewModifier = viewModifier
+        }
+
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
+            fatalError("layoutSize(fitting:pass:node:) has not been implemented")
+        }
+    }
+
+    func resolve(
+        context: Context,
+        cachedNodeModifier: AnyUIKitNodeModifier?
+    ) -> AnyUIKitNodeModifier {
+        (cachedNodeModifier as? ModifierNode) ?? ModifierNode()
     }
 }

@@ -32,8 +32,8 @@ extension GeometryReader: UIKitNodeResolvable {
             self.context = context
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
-            targetSize
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+            proposedSize.orDefault
         }
 
         func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
@@ -59,7 +59,6 @@ extension GeometryReader: UIKitNodeResolvable {
             node = content.resolve(context: context, cachedNode: node)
             node?.layout(in: container, bounds: bounds, pass: pass)
         }
-
     }
 
     func resolve(context: Context, cachedNode: SomeUIKitNode?) -> SomeUIKitNode {

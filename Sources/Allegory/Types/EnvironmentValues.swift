@@ -115,4 +115,6 @@ public struct EnvironmentValues {
     // MARK: Private
 
     public var _layoutAxis: Axis? = nil
+
+    public var _progressViewStyle: SomeProgressViewStyle? = CircularProgressViewStyle()
 }

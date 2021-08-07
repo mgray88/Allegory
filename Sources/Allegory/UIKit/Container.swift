@@ -8,7 +8,7 @@ import UIKit
 public struct Container {
 
     public var view: UIView & ContainerNode
-    public var viewController: UIViewController
+//    public var viewController: UIViewController
 
     @inlinable
     public var layer: CALayer & ContainerNode {

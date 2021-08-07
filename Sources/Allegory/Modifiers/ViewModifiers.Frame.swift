@@ -71,9 +71,9 @@ extension ViewModifiers._Frame: UIKitNodeModifierResolvable {
             self.environment = context.environment
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
             viewModifier.layoutAlgorithm(nodes: [node], env: environment)
-                .contentLayout(fittingSize: targetSize, pass: pass)
+                .layoutSize(fitting: proposedSize, pass: pass)
                 .idealSize
         }
 
@@ -83,14 +83,17 @@ extension ViewModifiers._Frame: UIKitNodeModifierResolvable {
             pass: LayoutPass,
             node: SomeUIKitNode
         ) {
-            let geometry = viewModifier
-                .layoutAlgorithm(nodes: [node], env: environment)
-                .contentLayout(fittingSize: bounds.size, pass: pass)
+            let childSize = node.layoutSize(
+                fitting: bounds.proposedSize,
+                pass: pass
+            )
             node.layout(
                 in: container,
                 bounds: bounds.update(
-                    to: geometry.frames[0]
-                        .offsetBy(dx: bounds.rect.minX, dy: bounds.rect.minY)
+                    to: CGRect(
+                        origin: CGPoint(x: bounds.rect.minX, y: bounds.rect.minY),
+                        size: childSize
+                    )
                 ),
                 pass: pass
             )

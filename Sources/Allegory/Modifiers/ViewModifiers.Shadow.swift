@@ -10,11 +10,11 @@ extension ViewModifiers {
         public let y: CGFloat
 
         @inlinable
-        public init(color: Color, radius: CGFloat, x: CGFloat, y: CGFloat) {
+        public init(color: Color, radius: Double, x: Double, y: Double) {
             self.color = color
-            self.radius = radius
-            self.x = x
-            self.y = y
+            self.radius = CGFloat(radius)
+            self.x = CGFloat(x)
+            self.y = CGFloat(y)
         }
     }
 }
@@ -33,9 +33,9 @@ extension View {
     @inlinable
     public func shadow(
         color: Color = Color(white: 0, opacity: 0.33),
-        radius: CGFloat,
-        x: CGFloat = 0,
-        y: CGFloat = 0
+        radius: Double,
+        x: Double = 0,
+        y: Double = 0
     ) -> ModifiedContent<Self, ViewModifiers._Shadow> {
         modifier(
             ViewModifiers._Shadow(

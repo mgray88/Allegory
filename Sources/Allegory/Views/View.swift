@@ -80,8 +80,8 @@ class ViewNode: UIKitNode {
     func update(view: Never, context: Context) {
     }
 
-    func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
-        node.layoutSize(fitting: targetSize, pass: pass)
+    func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        node.layoutSize(fitting: proposedSize, pass: pass)
     }
 
     func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
@@ -92,6 +92,7 @@ class ViewNode: UIKitNode {
         if needsViewUpdate {
             needsViewUpdate = false
             update(view: view, context: context)
+            context.rendered?.setNeedsRendering()
         }
     }
 
@@ -103,7 +104,7 @@ class ViewNode: UIKitNode {
                 if propertyStorage[label!] == nil { propertyStorage[label!] = property.storage.initialValue }
                 property.storage.get = { [unowned self] in self.propertyStorage[label!]! }
                 property.storage.set = { [unowned self] in
-                    self.propertyStorage[label!] = $0;
+                    self.propertyStorage[label!] = $0
                     self.contentWillChange()
                 }
             } else if var property = value as? EnvironmentObjectProperty {

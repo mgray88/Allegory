@@ -7,7 +7,7 @@ public protocol StateProperty: DynamicProperty {
 }
 
 @propertyWrapper
-public struct _State<Value>: StateProperty {
+public struct State<Value>: StateProperty {
 
     public let storage: StateStorage
 
@@ -28,11 +28,14 @@ public struct _State<Value>: StateProperty {
 
     @inlinable
     public var projectedValue: Binding<Value> {
-        return Binding(get: { self.wrappedValue }, set: { (value, transaction) in self.wrappedValue = value })
+        Binding(
+            get: { self.wrappedValue },
+            set: { value, _ in self.wrappedValue = value }
+        )
     }
 }
 
-extension _State where Value: ExpressibleByNilLiteral {
+extension State where Value: ExpressibleByNilLiteral {
 
     @inlinable
     public init() {

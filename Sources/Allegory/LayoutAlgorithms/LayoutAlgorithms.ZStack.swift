@@ -15,14 +15,18 @@ extension LayoutAlgorithms {
         }
 
         /// Calculate the stack geometry fitting `targetSize`.
-        internal func contentLayout(fittingSize targetSize: CGSize, pass: LayoutPass) -> ContentGeometry {
-            if let geometry = cache.geometry(for: pass, size: targetSize) {
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> ContentGeometry {
+            let proposedSize = proposedSize.orDefault
+            if let geometry = cache.geometry(for: pass, size: proposedSize) {
                 return geometry
             }
 
             var idealSize: CGSize = .zero
-            let frames = nodes.map { (node) -> CGRect in
-                let size = node.layoutSize(fitting: targetSize, pass: pass)
+            let frames = nodes.map { node -> CGRect in
+                let size = node.layoutSize(
+                    fitting: ProposedSize(proposedSize),
+                    pass: pass
+                )
                 var alignedBounds = CGRect(x: 0, y: 0, width: size.width, height: size.height)
 
                 switch layout.alignment.horizontal {
@@ -30,10 +34,10 @@ extension LayoutAlgorithms {
                     alignedBounds.origin.x = 0
 
                 case .center:
-                    alignedBounds.origin.x = (targetSize.width - size.width) / 2
+                    alignedBounds.origin.x = (proposedSize.width - size.width) / 2
 
                 case .trailing:
-                    alignedBounds.origin.x = targetSize.width - size.width
+                    alignedBounds.origin.x = proposedSize.width - size.width
 
                 default:
                     notSupported()
@@ -44,10 +48,10 @@ extension LayoutAlgorithms {
                     alignedBounds.origin.y = 0
 
                 case .center:
-                    alignedBounds.origin.y = (targetSize.height - size.height) / 2
+                    alignedBounds.origin.y = (proposedSize.height - size.height) / 2
 
                 case .bottom:
-                    alignedBounds.origin.y = targetSize.height - size.height
+                    alignedBounds.origin.y = proposedSize.height - size.height
 
                 case .firstTextBaseline, .lastTextBaseline:
                     notSupported()
@@ -60,7 +64,7 @@ extension LayoutAlgorithms {
             }
 
             let geometry = ContentGeometry(idealSize: idealSize, frames: frames)
-            cache.update(pass: pass, size: targetSize, geometry: geometry)
+            cache.update(pass: pass, size: proposedSize, geometry: geometry)
             return geometry
         }
     }

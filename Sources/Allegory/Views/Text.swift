@@ -23,7 +23,7 @@ public struct Text: View, Hashable {
     }
 
     @inlinable
-    public static func +(lhs: Text, rhs: Text) -> Text {
+    public static func + (lhs: Text, rhs: Text) -> Text {
         Text(Storage.concatenated(lhs.storage, rhs.storage))
     }
 }
@@ -214,15 +214,16 @@ extension Text: UIKitNodeResolvable {
             label.configure(with: view.storage, env: context.environment)
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             guard let text = text, let env = env else { return .zero }
-            if let geometry = cache.geometry(for: pass, size: targetSize) {
+            let proposedSize = proposedSize.orMax
+            if let geometry = cache.geometry(for: pass, size: proposedSize) {
                 return geometry.idealSize
             }
-            let size = text.storage.boundingSize(fitting: targetSize, env: env)
+            let size = text.storage.boundingSize(fitting: proposedSize, env: env)
             cache.update(
                 pass: pass,
-                size: targetSize,
+                size: proposedSize,
                 geometry: ContentGeometry(idealSize: size, frames: [])
             )
             return size
@@ -233,7 +234,6 @@ extension Text: UIKitNodeResolvable {
             label.frame = bounds.rect
             label.accessibilityFrame = label.convert(bounds.rect, to: nil)
         }
-
     }
 
     func resolve(context: Context, cachedNode: SomeUIKitNode?) -> SomeUIKitNode {
@@ -246,8 +246,10 @@ extension Text.Storage {
         switch self {
         case let .plain(stringValue):
             return stringValue
+
         case let .attributed(storage, _):
             return storage.stringValue
+
         case let .concatenated(lhs, rhs):
             return lhs.stringValue + rhs.stringValue
         }
@@ -263,8 +265,10 @@ extension Text.Storage {
         switch self {
         case .plain:
             return false
+
         case .attributed:
             return true
+
         case let .concatenated(lhs, rhs):
             return lhs.isAttributed || rhs.isAttributed
         }
@@ -306,8 +310,10 @@ extension UILabel {
         switch env.multilineTextAlignment {
         case .leading:
             textAlignment = .left
+
         case .center:
             textAlignment = .center
+
         case .trailing:
             textAlignment = .right
         }
@@ -315,8 +321,10 @@ extension UILabel {
         switch env.truncationMode {
         case .head:
             lineBreakMode = .byTruncatingHead
+
         case .middle:
             lineBreakMode = .byTruncatingMiddle
+
         case .tail:
             lineBreakMode = .byTruncatingTail
         }

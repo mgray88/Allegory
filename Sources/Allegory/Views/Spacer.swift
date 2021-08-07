@@ -44,12 +44,14 @@ extension Spacer: UIKitNodeResolvable {
             self.context = context
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             switch context.environment._layoutAxis {
             case .horizontal:
                 return CGSize(width: minLength, height: 0)
+
             case .vertical:
                 return CGSize(width: 0, height: minLength)
+
             default:
                 return CGSize(width: minLength, height: minLength)
             }

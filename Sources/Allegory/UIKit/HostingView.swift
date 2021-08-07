@@ -45,13 +45,21 @@ open class HostingView: ContainerView {
         renderer.hostingView = self
     }
 
+    public convenience init(
+        context: Context = Context(),
+        @ViewBuilder rootView: () -> SomeView
+    ) {
+        self.init(rootView: rootView(), context: context, cachedNode: nil)
+    }
+
     public func update(rootView: SomeView, resolvedNode: AnyUIKitNode? = nil) {
         self.view = rootView
         self.node = resolvedNode?.node ?? view.resolve(context: context, cachedNode: nil)
         self.setNeedsRendering()
     }
 
-    public required init?(coder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -65,7 +73,7 @@ open class HostingView: ContainerView {
         }
         if previousBounds != bounds {
             previousBounds = bounds
-            let container = Container(view: self, viewController: parentViewController!)
+            let container = Container(view: self) // , viewController: parentViewController!)
             container.view.replaceSubnodes {
                 node.layout(in: container, bounds: layoutBounds, pass: layoutPass)
             }
@@ -80,8 +88,12 @@ open class HostingView: ContainerView {
         }
     }
 
+    open override var intrinsicContentSize: CoreGraphics.CGSize {
+        node.layoutSize(fitting: ProposedSize(bounds.size), pass: layoutPass)
+    }
+
     open func layoutSize(fitting size: CGSize) -> CGSize {
-        node.layoutSize(fitting: size, pass: layoutPass)
+        node.layoutSize(fitting: ProposedSize(size), pass: layoutPass)
     }
 
     open func setNeedsRendering() {

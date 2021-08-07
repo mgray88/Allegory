@@ -7,7 +7,7 @@ import UIKit
 open class ContainerView: UIView, ContainerNode {
 
     open override class var layerClass: AnyClass {
-        return ContainerLayer.self
+        ContainerLayer.self
     }
 
     private var subviewsToRemove: Set<UIView> = []

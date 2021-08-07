@@ -4,7 +4,7 @@
 
 /// A rectangular shape with rounded corners, aligned inside the frame of the
 /// view containing it.
-public struct RoundedRectangle: Shape, Equatable {
+public struct RoundedRectangle: Shape, Hashable {
     public var cornerSize: CGSize
     public var style: RoundedCornerStyle
 
@@ -15,7 +15,7 @@ public struct RoundedRectangle: Shape, Equatable {
     }
 
     @inlinable
-    public init(cornerRadius: CGFloat, style: RoundedCornerStyle = .circular) {
+    public init(cornerRadius: Double, style: RoundedCornerStyle = .circular) {
         self.cornerSize = CGSize(width: cornerRadius, height: cornerRadius)
         self.style = style
     }

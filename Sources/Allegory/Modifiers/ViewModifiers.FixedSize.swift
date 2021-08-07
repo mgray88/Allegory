@@ -76,21 +76,24 @@ extension ViewModifiers._FixedSize: UIKitNodeModifierResolvable {
 
         var viewModifier: ViewModifiers._FixedSize!
 
-        func update(viewModifier: ViewModifiers._FixedSize, context: inout Context) {
+        func update(
+            viewModifier: ViewModifiers._FixedSize,
+            context: inout Context
+        ) {
             self.viewModifier = viewModifier
         }
 
         func layoutSize(
-            fitting targetSize: CGSize,
+            fitting proposedSize: ProposedSize,
             pass: LayoutPass,
             node: SomeUIKitNode
         ) -> CGSize {
-            var size = targetSize
+            var size = proposedSize
             if viewModifier.horizontal {
-                size.width = 0
+                size.width = nil
             }
             if viewModifier.vertical {
-                size.height = 0
+                size.height = nil
             }
             return node.layoutSize(fitting: size, pass: pass)
         }

@@ -104,16 +104,16 @@ extension ViewModifiers._Padding: UIKitNodeModifierResolvable {
             self.environment = context.environment
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
             viewModifier.layoutAlgorithm(nodes: [node], env: environment)
-                .contentLayout(fittingSize: targetSize, pass: pass)
+                .layoutSize(fitting: proposedSize, pass: pass)
                 .idealSize
         }
 
         func layout(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
             let geometry = viewModifier
                 .layoutAlgorithm(nodes: [node], env: environment)
-                .contentLayout(fittingSize: bounds.size, pass: pass)
+                .layoutSize(fitting: bounds.proposedSize, pass: pass)
             node.layout(
                 in: container,
                 bounds: bounds.update(

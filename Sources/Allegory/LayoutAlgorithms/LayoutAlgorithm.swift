@@ -5,5 +5,13 @@
 internal protocol LayoutAlgorithm {
 
     /// Calculate the stack geometry fitting `targetSize`.
-    func contentLayout(fittingSize targetSize: CGSize, pass: LayoutPass) -> ContentGeometry
+    func layoutSize(
+        fitting proposedSize: ProposedSize,
+        pass: LayoutPass
+    ) -> ContentGeometry
+}
+
+struct RenderingContext {
+    let container: Container
+    let bounds: Bounds
 }

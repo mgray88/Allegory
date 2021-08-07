@@ -56,9 +56,9 @@ public struct Image: View, Hashable {
     internal let name: String
     internal let bundle: Bundle?
     internal let label: Text?
-    internal var isResizable: Bool = false
-    internal var capInsets: EdgeInsets? = nil
-    internal var resizingMode: ResizingMode? = nil
+    internal var isResizable = false
+    internal var capInsets: EdgeInsets?
+    internal var resizingMode: ResizingMode?
 
     /// Creates a labeled image that you can use as content for controls.
     ///
@@ -166,9 +166,9 @@ extension Image: UIKitNodeResolvable {
             uiImageView.image = uiImage
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             if imageView.isResizable {
-                return targetSize
+                return proposedSize.or(uiImage?.size)
             } else {
                 return uiImage?.size ?? .zero
             }

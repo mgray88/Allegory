@@ -156,23 +156,20 @@ extension ViewModifiers._AspectRatio: UIKitNodeModifierResolvable {
             self.viewModifier = viewModifier
         }
 
-        func layoutSize(
-            fitting targetSize: CGSize,
-            pass: LayoutPass,
-            node: SomeUIKitNode
-        ) -> CGSize {
-            let size = node.layoutSize(fitting: targetSize, pass: pass)
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
+            let size = node.layoutSize(fitting: proposedSize, pass: pass)
             let ratio = viewModifier.aspectRatio ?? size.width / size.height
-            let targetRatio = targetSize.width / targetSize.height
+            let proposedSize = proposedSize.orDefault
+            let targetRatio = proposedSize.width / proposedSize.height
             if targetRatio < ratio {
                 return CGSize(
-                    width: targetSize.width,
-                    height: targetSize.height / ratio
+                    width: proposedSize.width,
+                    height: proposedSize.height / ratio
                 )
             } else {
                 return CGSize(
-                    width: targetSize.width * ratio,
-                    height: targetSize.height
+                    width: proposedSize.width * ratio,
+                    height: proposedSize.height
                 )
             }
         }

@@ -17,7 +17,7 @@ internal protocol SomeUIKitNode: LayoutNode {
     var isSpacer: Bool { get }
     var layoutPriority: Double { get }
     func update(view: SomeView, context: Context)
-    func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize
+    func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize
     func layout(in container: Container, bounds: Bounds, pass: LayoutPass)
 }
 

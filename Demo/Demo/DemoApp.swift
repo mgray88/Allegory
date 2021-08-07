@@ -6,7 +6,7 @@
 //
 
 import Allegory
-import Identifiable
+import AllegoryIdentifiable
 import SwiftUI
 
 @main

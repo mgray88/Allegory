@@ -13,7 +13,7 @@ protocol AnyUIKitNodeModifier {
 
     func update(viewModifier: SomeViewModifier, context: inout Context)
 
-    func layoutSize(fitting targetSize: CGSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize
+    func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize
 
     func layout(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode)
 }
@@ -37,8 +37,8 @@ extension AnyUIKitNodeModifier {
 
     func update(viewModifier: SomeViewModifier, context: inout Context) {}
 
-    func layoutSize(fitting targetSize: CGSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
-        node.layoutSize(fitting: targetSize, pass: pass)
+    func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
+        node.layoutSize(fitting: proposedSize, pass: pass)
     }
 
     func layout(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {

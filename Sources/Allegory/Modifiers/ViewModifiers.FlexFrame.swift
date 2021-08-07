@@ -100,17 +100,17 @@ extension ViewModifiers._FlexFrame: UIKitNodeModifierResolvable {
             self.viewModifier = viewModifier
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
             LayoutAlgorithms
                 .FlexFrame(flexFrame: viewModifier, node: node, screenScale: UIScreen.main.scale)
-                .contentLayout(fittingSize: targetSize, pass: pass)
+                .layoutSize(fitting: proposedSize, pass: pass)
                 .idealSize
         }
 
         func layout(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
             let geometry = LayoutAlgorithms
                 .FlexFrame(flexFrame: viewModifier, node: node, screenScale: UIScreen.main.scale)
-                .contentLayout(fittingSize: bounds.size, pass: pass)
+                .layoutSize(fitting: bounds.proposedSize, pass: pass)
             node.layout(
                 in: container,
                 bounds: bounds.update(

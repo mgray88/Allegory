@@ -14,10 +14,10 @@ Pod::Spec.new do |spec|
   spec.author       = { "Mike Gray" => "mgray88@gmail.com" }
   spec.platform     = :ios, "10.0"
   spec.source       = { :git => "https://github.com/mgray88/Allegory.git", :tag => "#{spec.version}" }
-  spec.source_files = "Sources/Allegory/*.swift"
+  spec.source_files = "Sources/Allegory/**/*.swift"
   spec.swift_versions = "5.4"
 
   spec.dependency "AllegoryIdentifiable"
-  spec.dependency "RxSwift", "~> 6.2"
+  spec.dependency "RxSwift", "~> 6.0"
 
 end

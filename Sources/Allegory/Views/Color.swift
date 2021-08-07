@@ -81,7 +81,7 @@ public struct Color: View, Hashable {
     ///   - opacity: An optional degree of opacity, given in the range 0 to 1. A
     ///     value of 0 means 100% transparency, while a value of 1 means 100%
     ///     opacity. The default is 1.
-    public init(white: Double, opacity: Double) {
+    public init(white: Double, opacity: Double = 1) {
         storage = .rgba(red: white, green: white, blue: white, opacity: opacity)
     }
 
@@ -204,8 +204,8 @@ extension Color: UIKitNodeResolvable {
             layer.backgroundColor = view.uiColor.cgColor
         }
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
-            targetSize
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+            proposedSize.orDefault
         }
 
         func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
@@ -213,7 +213,6 @@ extension Color: UIKitNodeResolvable {
             layer.removeAllAnimations()
             container.layer.addSublayer(layer)
         }
-
     }
 
     func resolve(context: Context, cachedNode: SomeUIKitNode?) -> SomeUIKitNode {

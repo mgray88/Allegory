@@ -31,12 +31,10 @@ extension LayoutAlgorithms {
         }
 
         /// Calculate the stack geometry fitting `targetSize` and aligned by `alignment`.
-        internal func contentLayout(
-            fittingSize targetSize: CGSize,
-            pass: LayoutPass
-        ) -> ContentGeometry {
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> ContentGeometry {
+            let proposedSize = proposedSize.orDefault
 
-            if let geometry = cache.geometry(for: pass, size: targetSize) {
+            if let geometry = cache.geometry(for: pass, size: proposedSize) {
                 return geometry
             }
 
@@ -50,11 +48,14 @@ extension LayoutAlgorithms {
             let rect = CGRect(
                 x: CGFloat(insets.leading),
                 y: CGFloat(insets.top),
-                width: targetSize.width - CGFloat(insets.leading + insets.trailing),
-                height: targetSize.height - CGFloat(insets.top + insets.bottom)
+                width: proposedSize.width - CGFloat(insets.leading + insets.trailing),
+                height: proposedSize.height - CGFloat(insets.top + insets.bottom)
             )
 
-            let nodeSize = node.layoutSize(fitting: rect.size, pass: pass)
+            let nodeSize = node.layoutSize(
+                fitting: ProposedSize(rect.size),
+                pass: pass
+            )
 
             let idealSize = CGSize(
                 width: nodeSize.width + CGFloat(insets.leading + insets.trailing),
@@ -62,7 +63,7 @@ extension LayoutAlgorithms {
             )
 
             let geometry = ContentGeometry(idealSize: idealSize, frames: [rect])
-            cache.update(pass: pass, size: targetSize, geometry: geometry)
+            cache.update(pass: pass, size: proposedSize, geometry: geometry)
             return geometry
         }
     }

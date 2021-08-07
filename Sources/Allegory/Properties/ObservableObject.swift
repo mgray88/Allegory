@@ -4,7 +4,6 @@
 
 import RxSwift
 
-
 /// A type of object with a publisher that emits before the object has changed.
 ///
 /// By default an ``ObservableObject`` will synthesize an ``objectWillChange``

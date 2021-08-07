@@ -18,7 +18,7 @@ extension EmptyView: UIKitNodeResolvable {
 
         func update(view: EmptyView, context: Context) {}
 
-        func layoutSize(fitting targetSize: CGSize, pass: LayoutPass) -> CGSize {
+        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             .zero
         }
 
