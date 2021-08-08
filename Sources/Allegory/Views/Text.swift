@@ -155,7 +155,7 @@ extension Text {
     /// - Parameter tracking: The amount of additional space, in points, that
     ///   the view should add to each character cluster after layout.
     /// - Returns: Text with the specified amount of tracking.
-    @inlinable
+    @available(*, unavailable)
     public func tracking(_ tracking: Double) -> Text {
         notSupported()
     }
@@ -214,7 +214,7 @@ extension Text: UIKitNodeResolvable {
             label.configure(with: view.storage, env: context.environment)
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             guard let text = text, let env = env else { return .zero }
             let proposedSize = proposedSize.orMax
             if let geometry = cache.geometry(for: pass, size: proposedSize) {
@@ -229,7 +229,7 @@ extension Text: UIKitNodeResolvable {
             return size
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
             container.view.addSubview(label)
             label.frame = bounds.rect
             label.accessibilityFrame = label.convert(bounds.rect, to: nil)

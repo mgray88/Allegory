@@ -17,12 +17,13 @@ extension LayoutAlgorithms {
             )
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> ContentGeometry {
-            hStackLayout.layoutSize(
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+            hStackLayout.size(
                 fitting: proposedSize.flipped,
                 pass: pass
             )
             .flipped()
+            .idealSize
         }
     }
 }

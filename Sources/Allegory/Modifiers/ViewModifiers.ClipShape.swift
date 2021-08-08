@@ -60,12 +60,12 @@ extension ViewModifiers._ClipShape: UIKitNodeModifierResolvable {
             clippingView.makePath = viewModifier.shape.path(in:)
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
             clippingView.frame = bounds.rect
             clippingView.layoutIfNeeded()
             container.view.addSubview(clippingView)
             clippingView.replaceSubnodes {
-                node.layout(
+                node.render(
                     in: container.replacingView(clippingView),
                     bounds: bounds.at(origin: .zero),
                     pass: pass

@@ -25,12 +25,12 @@ extension Optional: UIKitNodeResolvable where Wrapped: SomeView {
             node = view.map { $0.resolve(context: context, cachedNode: node) }
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
-            node?.layoutSize(fitting: proposedSize, pass: pass) ?? .zero
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+            node?.size(fitting: proposedSize, pass: pass) ?? .zero
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
-            node?.layout(in: container, bounds: bounds, pass: pass)
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
+            node?.render(in: container, bounds: bounds, pass: pass)
         }
 
     }

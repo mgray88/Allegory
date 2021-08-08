@@ -326,18 +326,11 @@ extension Slider: UIKitNodeResolvable {
             control.onEditingChanged = view.onEditingChanged
         }
 
-        func layoutSize(
-            fitting proposedSize: ProposedSize,
-            pass: LayoutPass
-        ) -> CGSize {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             control.sizeThatFits(proposedSize.orDefault)
         }
 
-        func layout(
-            in container: Container,
-            bounds: Bounds,
-            pass: LayoutPass
-        ) {
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
             container.view.addSubview(control)
             control.frame = bounds.rect
             control.accessibilityFrame = control.convert(bounds.rect, to: nil)
@@ -383,7 +376,6 @@ extension Slider {
         @objc
         private func valueChanged() {
             let steppedValue = round(value / step) * step
-            self.value = steppedValue
             binding?.wrappedValue = steppedValue
         }
 
@@ -395,6 +387,9 @@ extension Slider {
         @objc
         private func endEdit() {
             onEditingChanged?(false)
+
+            let steppedValue = round(value / step) * step
+            self.value = steppedValue
         }
     }
 }

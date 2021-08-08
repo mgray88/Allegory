@@ -60,12 +60,12 @@ extension ViewModifierContent: UIKitNodeResolvable {
             content = view.view.resolve(context: context, cachedNode: content)
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
-            content.layoutSize(fitting: proposedSize, pass: pass)
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+            content.size(fitting: proposedSize, pass: pass)
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
-            content.layout(in: container, bounds: bounds, pass: pass)
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
+            content.render(in: container, bounds: bounds, pass: pass)
         }
     }
 

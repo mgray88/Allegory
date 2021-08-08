@@ -111,12 +111,12 @@ class UIViewRepresentableNode: SomeUIKitNode {
         }
     }
 
-    func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+    func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
         let size = uiView.intrinsicContentSize
         return max(size, proposedSize.orMax)
     }
 
-    func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
+    func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
         uiView.frame = bounds.rect
         container.view.addSubview(uiView)
     }

@@ -44,7 +44,7 @@ extension Spacer: UIKitNodeResolvable {
             self.context = context
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             switch context.environment._layoutAxis {
             case .horizontal:
                 return CGSize(width: minLength, height: 0)
@@ -57,7 +57,7 @@ extension Spacer: UIKitNodeResolvable {
             }
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
         }
     }
 

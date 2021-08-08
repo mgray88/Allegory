@@ -23,7 +23,7 @@ extension LayoutAlgorithms {
         }
 
         /// Calculate the stack geometry fitting `targetSize` and aligned by `alignment`.
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> ContentGeometry {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             var proposedSize = ProposedSize(
                 width: proposedSize.width ?? modifier.idealWidth,
                 height: proposedSize.height ?? modifier.idealHeight
@@ -42,7 +42,7 @@ extension LayoutAlgorithms {
                 proposedSize.height = maxHeight
             }
 
-            var size = node.layoutSize(fitting: ProposedSize(proposedSize), pass: pass)
+            var size = node.size(fitting: ProposedSize(proposedSize), pass: pass)
             size.width = clamp(
                 proposedSize.width,
                 min: modifier.minWidth ?? size.width,
@@ -54,30 +54,7 @@ extension LayoutAlgorithms {
                 max: modifier.maxHeight ?? size.height
             )
 
-            let rect: CGRect
-
-            switch modifier.alignment {
-            case .center:
-                rect = CGRect(
-                    x: (proposedSize.width - size.width) / 2,
-                    y: (proposedSize.height - size.height) / 2,
-                    width: size.width,
-                    height: size.height
-                )
-
-            case .leading:
-                rect = CGRect(
-                    x: 0,
-                    y: (proposedSize.height - size.height) / 2,
-                    width: size.width,
-                    height: size.height
-                )
-
-            default:
-                TODO()
-            }
-
-            return ContentGeometry(idealSize: proposedSize, frames: [rect])
+            return size
         }
     }
 }

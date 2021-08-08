@@ -163,8 +163,7 @@ public struct Binding<Value>: DynamicProperty {
 
     /// Creates a binding from the value of another binding.
     public init(projectedValue: Binding<Value>) {
-        self.get = { projectedValue.get() }
-        self.set = { value, transaction in projectedValue.set(value, transaction) }
+        self = projectedValue
     }
 
     /// Returns a binding to the resulting value of a given key path.

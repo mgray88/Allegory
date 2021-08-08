@@ -8,7 +8,11 @@ import UIKit
 public struct Container {
 
     public var view: UIView & ContainerNode
-//    public var viewController: UIViewController
+
+    @inlinable
+    public var viewController: UIViewController? {
+        view.parentViewController
+    }
 
     @inlinable
     public var layer: CALayer & ContainerNode {
@@ -19,5 +23,11 @@ public struct Container {
         var copy = self
         copy.view = view
         return copy
+    }
+}
+
+extension UIResponder {
+    public var parentViewController: UIViewController? {
+        next as? UIViewController ?? next?.parentViewController
     }
 }

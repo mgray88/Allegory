@@ -75,7 +75,7 @@ open class HostingView: ContainerView {
             previousBounds = bounds
             let container = Container(view: self) // , viewController: parentViewController!)
             container.view.replaceSubnodes {
-                node.layout(in: container, bounds: layoutBounds, pass: layoutPass)
+                node.render(in: container, bounds: layoutBounds, pass: layoutPass)
             }
         }
     }
@@ -89,11 +89,11 @@ open class HostingView: ContainerView {
     }
 
     open override var intrinsicContentSize: CoreGraphics.CGSize {
-        node.layoutSize(fitting: ProposedSize(bounds.size), pass: layoutPass)
+        node.size(fitting: ProposedSize(bounds.size), pass: layoutPass)
     }
 
     open func layoutSize(fitting size: CGSize) -> CGSize {
-        node.layoutSize(fitting: ProposedSize(size), pass: layoutPass)
+        node.size(fitting: ProposedSize(size), pass: layoutPass)
     }
 
     open func setNeedsRendering() {
@@ -101,12 +101,5 @@ open class HostingView: ContainerView {
         layoutPass = .init()
         setNeedsLayout()
         superview?.setNeedsLayout()
-    }
-}
-
-private extension UIResponder {
-
-    var parentViewController: UIViewController? {
-        return next as? UIViewController ?? next?.parentViewController
     }
 }

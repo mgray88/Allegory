@@ -58,28 +58,33 @@ extension VariadicView.Tree: UIKitNodeResolvable {
             fatalError()
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
-            layoutAlgorithm.layoutSize(
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+            layoutAlgorithm.size(
                 fitting: proposedSize,
                 pass: pass
-            ).idealSize
+            )
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
-            let layout = layoutAlgorithm.layoutSize(
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
+            let layout = layoutAlgorithm.size(
                 fitting: bounds.proposedSize,
                 pass: pass
             )
-            zip(nodes, layout.frames).forEach { node, frame in
-                node.layout(
-                    in: container,
-                    bounds: Bounds(
-                        rect: frame.offsetBy(dx: bounds.origin.x, dy: bounds.origin.y),
-                        safeAreaInsets: .zero
-                    ),
-                    pass: pass
-                )
-            }
+            layoutAlgorithm.render(
+                context: .init(container: container, bounds: bounds),
+                size: bounds.size,
+                pass: pass
+            )
+//            zip(nodes, layout.frames).forEach { node, frame in
+//                node.render(
+//                    in: container,
+//                    bounds: Bounds(
+//                        rect: frame.offsetBy(dx: bounds.origin.x, dy: bounds.origin.y),
+//                        safeAreaInsets: .zero
+//                    ),
+//                    pass: pass
+//                )
+//            }
         }
     }
 

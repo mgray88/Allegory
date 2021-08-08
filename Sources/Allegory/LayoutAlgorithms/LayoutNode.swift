@@ -7,10 +7,17 @@ internal protocol LayoutNode {
     var isSpacer: Bool { get }
     var layoutPriority: Double { get }
 
-    func layoutSize(
-        fitting proposedSize: ProposedSize,
-        pass: LayoutPass
-    ) -> CGSize
+    func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize
+
+    func alignment(
+        for alignment: HorizontalAlignment,
+        in size: CGSize
+    ) -> CGFloat?
+
+    func alignment(
+        for alignment: VerticalAlignment,
+        in size: CGSize
+    ) -> CGFloat?
 }
 
 extension LayoutNode {
@@ -30,14 +37,25 @@ private struct AxisFlippedLayoutNode: LayoutNode {
         layoutNode.layoutPriority
     }
 
-    func layoutSize(
-        fitting proposedSize: ProposedSize,
-        pass: LayoutPass
-    ) -> CGSize {
-        let size = layoutNode.layoutSize(
+    func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        let size = layoutNode.size(
             fitting: proposedSize.flipped,
             pass: pass
         )
         return CGSize(width: size.height, height: size.width)
+    }
+
+    func alignment(
+        for alignment: HorizontalAlignment,
+        in size: CGSize
+    ) -> CGFloat? {
+        layoutNode.alignment(for: alignment, in: size)
+    }
+
+    func alignment(
+        for alignment: VerticalAlignment,
+        in size: CGSize
+    ) -> CGFloat? {
+        layoutNode.alignment(for: alignment, in: size)
     }
 }

@@ -18,11 +18,11 @@ extension EmptyView: UIKitNodeResolvable {
 
         func update(view: EmptyView, context: Context) {}
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             .zero
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {}
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {}
     }
 
     func resolve(context: Context, cachedNode: SomeUIKitNode?) -> SomeUIKitNode {

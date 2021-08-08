@@ -166,7 +166,7 @@ extension Image: UIKitNodeResolvable {
             uiImageView.image = uiImage
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             if imageView.isResizable {
                 return proposedSize.or(uiImage?.size)
             } else {
@@ -174,7 +174,7 @@ extension Image: UIKitNodeResolvable {
             }
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
             container.view.addSubview(uiImageView)
             uiImageView.frame = bounds.rect
         }

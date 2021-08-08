@@ -3,12 +3,17 @@
 //
 
 internal protocol LayoutAlgorithm {
+    /// Calculate the layout size fitting `targetSize`.
+    func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize
 
-    /// Calculate the stack geometry fitting `targetSize`.
-    func layoutSize(
-        fitting proposedSize: ProposedSize,
-        pass: LayoutPass
-    ) -> ContentGeometry
+    ///
+    func render(context: RenderingContext, size: CGSize, pass: LayoutPass)
+}
+
+extension LayoutAlgorithm {
+    func render(context: RenderingContext, size: CGSize, pass: LayoutPass) {
+        abstractMethod()
+    }
 }
 
 struct RenderingContext {

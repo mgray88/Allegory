@@ -46,6 +46,43 @@ extension ModifiedContent: Equatable
     where Content: Equatable, Modifier: Equatable {}
 
 extension View {
+    /// Applies a modifier to a view and returns a new view.
+    ///
+    /// Use this modifier to combine a ``View`` and a ``ViewModifier``, to
+    /// create a new view. For example, if you create a view modifier for
+    /// a new kind of caption with blue text surrounded by a rounded rectangle:
+    ///
+    ///     struct BorderedCaption: ViewModifier {
+    ///         func body(content: Content) -> SomeView {
+    ///             content
+    ///                 .font(.caption2)
+    ///                 .padding(10)
+    ///                 .overlay(
+    ///                     RoundedRectangle(cornerRadius: 15)
+    ///                         .stroke(lineWidth: 1)
+    ///                 )
+    ///                 .foregroundColor(Color.blue)
+    ///         }
+    ///     }
+    ///
+    /// You can use ``modifier(_:)`` to extend ``View`` to create new modifier
+    /// for applying the `BorderedCaption` defined above:
+    ///
+    ///     extension View {
+    ///         func borderedCaption() -> ModifiedContent<Self, BorderedCaption> {
+    ///             modifier(BorderedCaption())
+    ///         }
+    ///     }
+    ///
+    /// Then you can apply the bordered caption to any view:
+    ///
+    ///     Image(systemName: "bus")
+    ///         .resizable()
+    ///         .frame(width:50, height:50)
+    ///     Text("Downtown Bus")
+    ///         .borderedCaption()
+    ///
+    /// - Parameter modifier: The modifier to apply to this view.
     public func modifier<Modifier: ViewModifier>(
         _ modifier: Modifier
     ) -> ModifiedContent<Self, Modifier> {
@@ -73,27 +110,33 @@ extension ModifiedContent: UIKitNodeResolvable
 
         func update(view: ModifiedContent<Content, Modifier>, context: Context) {
             var context = context
-            if let contentNodeModifier = view.modifier.resolve(context: &context, cachedNodeModifier: contentNodeModifier) {
+            if let contentNodeModifier = view.modifier
+                .resolve(context: &context, cachedNodeModifier: contentNodeModifier) {
+
                 self.contentNodeModifier = contentNodeModifier
-                contentNode = view.content.resolve(context: context, cachedNode: contentNode)
+                contentNode = view.content
+                    .resolve(context: context, cachedNode: contentNode)
             } else {
-                contentNode = view.modifier.body(content: view.content).resolve(context: context, cachedNode: contentNode)
+                contentNode = view.modifier.body(content: view.content)
+                    .resolve(context: context, cachedNode: contentNode)
             }
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             if let contentNodeModifier = contentNodeModifier {
-                return contentNodeModifier.layoutSize(fitting: proposedSize, pass: pass, node: contentNode)
+                return contentNodeModifier
+                    .size(fitting: proposedSize, pass: pass, node: contentNode)
             } else {
-                return contentNode.layoutSize(fitting: proposedSize, pass: pass)
+                return contentNode.size(fitting: proposedSize, pass: pass)
             }
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
             if let contentNodeModifier = contentNodeModifier {
-                contentNodeModifier.layout(in: container, bounds: bounds, pass: pass, node: contentNode)
+                contentNodeModifier
+                    .render(in: container, bounds: bounds, pass: pass, node: contentNode)
             } else {
-                contentNode.layout(in: container, bounds: bounds, pass: pass)
+                contentNode.render(in: container, bounds: bounds, pass: pass)
             }
         }
     }
@@ -120,7 +163,7 @@ extension ModifiedContent: UIKitNodeModifierResolvable
             self.viewModifier = viewModifier
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
             fatalError("layoutSize(fitting:pass:node:) has not been implemented")
         }
     }

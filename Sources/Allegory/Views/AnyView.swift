@@ -19,28 +19,7 @@ public struct AnyView: View {
 }
 
 extension AnyView: UIKitNodeResolvable {
-
-    private class Node: UIKitNode {
-        var hierarchyIdentifier: String {
-            "AnyView<\(node.hierarchyIdentifier)>"
-        }
-
-        var node: SomeUIKitNode!
-
-        func update(view: AnyView, context: Context) {
-            node = view.view.resolve(context: context, cachedNode: node)
-        }
-
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
-            node.layoutSize(fitting: proposedSize, pass: pass)
-        }
-
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
-            node.layout(in: container, bounds: bounds, pass: pass)
-        }
-    }
-
     func resolve(context: Context, cachedNode: SomeUIKitNode?) -> SomeUIKitNode {
-        (cachedNode as? Node) ?? Node()
+        view.resolve(context: context, cachedNode: cachedNode)
     }
 }

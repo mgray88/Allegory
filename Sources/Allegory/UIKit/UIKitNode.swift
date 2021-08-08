@@ -17,8 +17,8 @@ internal protocol SomeUIKitNode: LayoutNode {
     var isSpacer: Bool { get }
     var layoutPriority: Double { get }
     func update(view: SomeView, context: Context)
-    func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize
-    func layout(in container: Container, bounds: Bounds, pass: LayoutPass)
+    func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize
+    func render(in container: Container, bounds: Bounds, pass: LayoutPass)
 }
 
 internal protocol UIKitNode: SomeUIKitNode {
@@ -34,6 +34,20 @@ extension SomeUIKitNode {
 
     internal var layoutPriority: Double {
         0
+    }
+
+    func alignment(
+        for alignment: HorizontalAlignment,
+        in size: CGSize
+    ) -> CGFloat? {
+        nil
+    }
+
+    func alignment(
+        for alignment: VerticalAlignment,
+        in size: CGSize
+    ) -> CGFloat? {
+        nil
     }
 }
 

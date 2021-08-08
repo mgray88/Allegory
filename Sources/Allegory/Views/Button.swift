@@ -118,14 +118,14 @@ extension Button: UIKitNodeResolvable {
             control.tappedHandler = view.action
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
-            label.layoutSize(fitting: proposedSize, pass: pass)
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+            label.size(fitting: proposedSize, pass: pass)
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
             control.frame = bounds.rect
             container.view.addSubview(control)
-            label.layout(
+            label.render(
                 in: container.replacingView(control),
                 bounds: bounds.at(origin: .zero),
                 pass: pass

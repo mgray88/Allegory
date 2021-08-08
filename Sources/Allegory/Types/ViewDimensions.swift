@@ -10,7 +10,25 @@ public struct ViewDimensions: Equatable {
     /// The view’s width.
     let width: CGFloat
 
-//    subscript(guide: HorizontalAlignment) -> CGFloat {
-//
-//    }
+    /// Gets the value of the given horizontal guide.
+    public subscript(guide: HorizontalAlignment) -> CGFloat {
+        TODO()
+    }
+
+    /// Gets the value of the given vertical guide.
+    public subscript(guide: VerticalAlignment) -> CGFloat {
+        TODO()
+    }
+
+    /// Gets the explicit value of the given alignment guide in this view, or
+    /// `nil` if no such value exists.
+    public subscript(explicit guide: HorizontalAlignment) -> CGFloat? {
+        TODO()
+    }
+
+    /// Gets the explicit value of the given alignment guide in this view, or
+    /// `nil` if no such value exists.
+    public subscript(explicit guide: VerticalAlignment) -> CGFloat? {
+        TODO()
+    }
 }

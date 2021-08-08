@@ -58,11 +58,11 @@ extension CGSize {
         )
     }
 
-    static func +(lhs: CGSize, rhs: CGSize) -> CGSize {
+    static func + (lhs: CGSize, rhs: CGSize) -> CGSize {
         CGSize(width: lhs.width + rhs.width, height: lhs.height + rhs.height)
     }
 
-    static func -(lhs: CGSize, rhs: CGSize) -> CGSize {
+    static func - (lhs: CGSize, rhs: CGSize) -> CGSize {
         CGSize(width: lhs.width - rhs.width, height: lhs.height - rhs.height)
     }
 }
@@ -73,6 +73,24 @@ extension CGSize {
         CGSize(
             width: width.roundedToScale(scale: scale, rule: .awayFromZero),
             height: height.roundedToScale(scale: scale, rule: .awayFromZero)
+        )
+    }
+}
+
+extension CGSize {
+    func aligned(in bounds: Bounds, _ alignment: Alignment) -> Bounds {
+        let parentPoint = alignment.point(for: bounds.size)
+        let childPoint = alignment.point(for: self)
+        let origin = parentPoint - childPoint
+        return bounds.update(
+            to: CGRect(
+                origin: origin,
+                size: self
+            )
+            .offsetBy(
+                dx: bounds.rect.minX,
+                dy: bounds.rect.minY
+            )
         )
     }
 }

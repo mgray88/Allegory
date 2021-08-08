@@ -104,31 +104,31 @@ public struct Alignment: Equatable {
     }
 
     /// A guide marking the center of the view.
-    public static let center: Alignment = Alignment(horizontal: .center, vertical: .center)
+    public static let center = Alignment(horizontal: .center, vertical: .center)
 
     /// A guide marking the leading edge of the view.
-    public static let leading: Alignment = Alignment(horizontal: .leading, vertical: .center)
+    public static let leading = Alignment(horizontal: .leading, vertical: .center)
 
     /// A guide marking the trailing edge of the view.
-    public static let trailing: Alignment = Alignment(horizontal: .trailing, vertical: .center)
+    public static let trailing = Alignment(horizontal: .trailing, vertical: .center)
 
     /// A guide marking the top edge of the view.
-    public static let top: Alignment = Alignment(horizontal: .center, vertical: .top)
+    public static let top = Alignment(horizontal: .center, vertical: .top)
 
     /// A guide marking the bottom edge of the view.
-    public static let bottom: Alignment = Alignment(horizontal: .center, vertical: .bottom)
+    public static let bottom = Alignment(horizontal: .center, vertical: .bottom)
 
     /// A guide marking the top and leading edges of the view.
-    public static let topLeading: Alignment = Alignment(horizontal: .leading, vertical: .top)
+    public static let topLeading = Alignment(horizontal: .leading, vertical: .top)
 
     /// A guide marking the top and trailing edges of the view.
-    public static let topTrailing: Alignment = Alignment(horizontal: .trailing, vertical: .top)
+    public static let topTrailing = Alignment(horizontal: .trailing, vertical: .top)
 
     /// A guide marking the bottom and leading edges of the view.
-    public static let bottomLeading: Alignment = Alignment(horizontal: .leading, vertical: .bottom)
+    public static let bottomLeading = Alignment(horizontal: .leading, vertical: .bottom)
 
     /// A guide marking the bottom and trailing edges of the view.
-    public static let bottomTrailing: Alignment = Alignment(horizontal: .trailing, vertical: .bottom)
+    public static let bottomTrailing = Alignment(horizontal: .trailing, vertical: .bottom)
 }
 
 extension HorizontalAlignment {
@@ -138,10 +138,13 @@ extension HorizontalAlignment {
         switch self {
         case .leading:
             return .top
+
         case .center:
             return .center
+
         case .trailing:
             return .bottom
+
         default:
             fatalError()
         }

@@ -291,11 +291,11 @@ extension ProgressView: UIKitNodeResolvable {
             activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             TODO()
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
             TODO()
         }
     }

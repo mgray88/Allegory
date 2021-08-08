@@ -45,11 +45,11 @@ extension _ShapeView: UIKitNodeResolvable {
             }
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             proposedSize.orDefault
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
             render(layer, bounds)
             layer.removeAllAnimations()
             // TODO: Do we need to remove a layer first?

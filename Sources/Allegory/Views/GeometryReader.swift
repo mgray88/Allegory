@@ -32,11 +32,11 @@ extension GeometryReader: UIKitNodeResolvable {
             self.context = context
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             proposedSize.orDefault
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
             guard let view = view, let context = context else { fatalError() }
             let unsafeRect = bounds.unsafeRect()
             let proxy = GeometryProxy(
@@ -57,7 +57,12 @@ extension GeometryReader: UIKitNodeResolvable {
             )
             let content = view.content(proxy)
             node = content.resolve(context: context, cachedNode: node)
-            node?.layout(in: container, bounds: bounds, pass: pass)
+            let size = node!.size(fitting: bounds.proposedSize, pass: pass)
+            node!.render(
+                in: container,
+                bounds: size.aligned(in: bounds, .center),
+                pass: pass
+            )
         }
     }
 

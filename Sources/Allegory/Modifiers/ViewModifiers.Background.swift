@@ -45,9 +45,9 @@ extension ViewModifiers._Background: UIKitNodeModifierResolvable {
             backgroundNode = viewModifier.background.resolve(context: context, cachedNode: backgroundNode)
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
-            backgroundNode.layout(in: container, bounds: bounds, pass: pass)
-            node.layout(in: container, bounds: bounds, pass: pass)
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
+            backgroundNode.render(in: container, bounds: bounds, pass: pass)
+            node.render(in: container, bounds: bounds, pass: pass)
         }
     }
 

@@ -4,10 +4,12 @@
 
 extension ViewModifiers {
     public struct _Overlay<Overlay: View>: ViewModifier {
+        public let alignment: Alignment
         public let overlay: Overlay
 
         @inlinable
-        public init(_ overlay: Overlay) {
+        public init(_ alignment: Alignment, _ overlay: Overlay) {
+            self.alignment = alignment
             self.overlay = overlay
         }
     }
@@ -17,8 +19,6 @@ extension View {
     /// Layers specified views in front of this view.
     ///
     /// When you provide multiple views, TOCUIKit stacks them.
-    ///
-    /// > Warning: `alignment` not yet implemented.
     ///
     /// - Parameters:
     ///   - alignment: An alignment that you use to position the overlayed view.
@@ -30,10 +30,10 @@ extension View {
     ///   view.
     @inlinable
     public func overlay<V>(
-        alignment: Alignment = .center, // TODO: overlay alignment
+        alignment: Alignment = .center,
         content: () -> V
     ) -> ModifiedContent<Self, ViewModifiers._Overlay<V>> where V: View {
-        modifier(ViewModifiers._Overlay(content()))
+        modifier(ViewModifiers._Overlay(alignment, content()))
     }
 }
 
@@ -43,15 +43,24 @@ extension ViewModifiers._Overlay: UIKitNodeModifierResolvable {
             "Overlay"
         }
 
+        private var overlay: ViewModifiers._Overlay<Overlay>!
         private var overlayNode: SomeUIKitNode!
 
         func update(viewModifier: ViewModifiers._Overlay<Overlay>, context: inout Context) {
+            self.overlay = viewModifier
             overlayNode = viewModifier.overlay.resolve(context: context, cachedNode: overlayNode)
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
-            node.layout(in: container, bounds: bounds, pass: pass)
-            overlayNode.layout(in: container, bounds: bounds, pass: pass)
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
+            node.render(in: container, bounds: bounds, pass: pass)
+            let overlaySize = overlayNode.size(
+                fitting: bounds.proposedSize, pass: pass
+            )
+            overlayNode.render(
+                in: container,
+                bounds: overlaySize.aligned(in: bounds, overlay.alignment),
+                pass: pass
+            )
         }
     }
 

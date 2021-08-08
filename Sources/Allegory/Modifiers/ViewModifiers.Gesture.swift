@@ -189,16 +189,11 @@ extension ViewModifiers._Gesture: UIKitNodeModifierResolvable {
             )
         }
 
-        func layout(
-            in container: Container,
-            bounds: Bounds,
-            pass: LayoutPass,
-            node: SomeUIKitNode
-        ) {
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
             gestureView.frame = bounds.rect
             container.view.addSubview(gestureView)
             gestureView.replaceSubnodes {
-                node.layout(
+                node.render(
                     in: container.replacingView(gestureView),
                     bounds: bounds.at(origin: .zero),
                     pass: pass

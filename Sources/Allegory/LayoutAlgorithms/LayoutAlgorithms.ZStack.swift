@@ -15,15 +15,15 @@ extension LayoutAlgorithms {
         }
 
         /// Calculate the stack geometry fitting `targetSize`.
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> ContentGeometry {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             let proposedSize = proposedSize.orDefault
             if let geometry = cache.geometry(for: pass, size: proposedSize) {
-                return geometry
+                return geometry.idealSize
             }
 
             var idealSize: CGSize = .zero
             let frames = nodes.map { node -> CGRect in
-                let size = node.layoutSize(
+                let size = node.size(
                     fitting: ProposedSize(proposedSize),
                     pass: pass
                 )
@@ -65,7 +65,7 @@ extension LayoutAlgorithms {
 
             let geometry = ContentGeometry(idealSize: idealSize, frames: frames)
             cache.update(pass: pass, size: proposedSize, geometry: geometry)
-            return geometry
+            return geometry.idealSize
         }
     }
 }

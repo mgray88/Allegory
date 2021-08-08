@@ -25,7 +25,12 @@ extension LayoutAlgorithms {
         }
 
         /// Calculate the stack geometry fitting `targetSize` and aligned by `alignment`.
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> ContentGeometry {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+            if let width = frame.width,
+               let height = frame.height {
+                return CGSize(width: width, height: height)
+            }
+
             var targetSize = proposedSize
             if let width = frame.width {
                 targetSize.width = width
@@ -34,7 +39,7 @@ extension LayoutAlgorithms {
                 targetSize.height = height
             }
 
-            var viewSize = node.layoutSize(fitting: targetSize, pass: pass)
+            var viewSize = node.size(fitting: targetSize, pass: pass)
             if let width = frame.width {
                 viewSize.width = width
             }
@@ -42,30 +47,7 @@ extension LayoutAlgorithms {
                 viewSize.height = height
             }
 
-//            let selfPoint = frame.alignment.point(for: targetSize)
-//            let childPoint = frame.alignment.point(for: viewSize)
-
-//            let rect: CGRect = CGRect(
-//                x: selfPoint.x - childPoint.x,
-//                y: selfPoint.y - childPoint.y,
-//                width: viewSize.width,
-//                height: viewSize.height
-//            )
-//            let rect: CGRect
-//            switch frame.alignment {
-//            case .center:
-//                rect = CGRect(
-//                    x: (targetSize.width - viewSize.width) / 2,
-//                    y: (targetSize.height - viewSize.height) / 2,
-//                    width: viewSize.width,
-//                    height: viewSize.height
-//                )
-//
-//            default:
-//                TODO()
-//            }
-
-            return ContentGeometry(idealSize: viewSize, frames: [.zero])
+            return viewSize
         }
     }
 }

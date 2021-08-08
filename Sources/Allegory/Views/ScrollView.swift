@@ -91,18 +91,18 @@ extension ScrollView: UIKitNodeResolvable {
             scrollView.alwaysBounceHorizontal = view.axes.contains(.horizontal)
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
             if axes == [.horizontal, .vertical] {
                 return proposedSize.orMax
             } else if axes == [.vertical] {
-                var size = content.layoutSize(
+                var size = content.size(
                     fitting: .init(width: proposedSize.width, height: 0),
                     pass: pass
                 )
                 size.height = proposedSize.orDefault.height
                 return size
             } else if axes == [.horizontal] {
-                var size = content.layoutSize(
+                var size = content.size(
                     fitting: .init(width: 0, height: proposedSize.height),
                     pass: pass
                 )
@@ -113,15 +113,15 @@ extension ScrollView: UIKitNodeResolvable {
             }
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
-            let contentSize = content.layoutSize(
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
+            let contentSize = content.size(
                 fitting: bounds.proposedSize,
                 pass: pass
             )
             scrollView.frame = bounds.rect
             scrollView.contentSize = contentSize
             container.view.addSubview(scrollView)
-            content.layout(
+            content.render(
                 in: container.replacingView(scrollView),
                 bounds: bounds.update(to: .init(origin: .zero, size: contentSize)),
                 pass: pass

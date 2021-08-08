@@ -51,3 +51,16 @@ extension ProposedSize {
         )
     }
 }
+
+extension ProposedSize {
+    func inset(by insets: EdgeInsets) -> ProposedSize {
+        var copy = self
+        if let width = copy.width {
+            copy.width = max(width - CGFloat(insets.leading + insets.trailing), 0)
+        }
+        if let height = copy.height {
+            copy.height = max(height - CGFloat(insets.top + insets.bottom), 0)
+        }
+        return copy
+    }
+}

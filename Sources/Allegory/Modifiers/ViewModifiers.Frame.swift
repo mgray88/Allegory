@@ -9,13 +9,20 @@ extension ViewModifiers {
         internal let height: CGFloat?
         internal let alignment: Alignment
 
-        internal init(width: CGFloat? = nil, height: CGFloat? = nil, alignment: Alignment = .center) {
+        internal init(
+            width: CGFloat? = nil,
+            height: CGFloat? = nil,
+            alignment: Alignment = .center
+        ) {
             self.width = width
             self.height = height
             self.alignment = alignment
         }
 
-        internal func layoutAlgorithm(nodes: [LayoutNode], env: EnvironmentValues) -> LayoutAlgorithm {
+        internal func layoutAlgorithm(
+            nodes: [LayoutNode],
+            env: EnvironmentValues
+        ) -> LayoutAlgorithm {
             LayoutAlgorithms.Frame(frame: self, node: nodes.first!)
         }
     }
@@ -28,9 +35,6 @@ extension View {
     /// both. If you only specify one of the dimensions, the resulting view
     /// assumes this view’s sizing behavior in the other dimension.
     ///
-    /// > Warning: ``Alignment``s other than ``Alignment/center`` are not
-    ///   currently implemented.
-    ///
     /// - Parameters:
     ///   - width: A fixed width for the resulting view. If `width` is `nil`,
     ///     the resulting view assumes this view’s sizing behavior.
@@ -42,14 +46,14 @@ extension View {
     /// - Returns: A view with fixed dimensions of `width` and `height`, for the
     ///   parameters that are `non-nil`.
     public func frame(
-        width: Double? = nil,
-        height: Double? = nil,
+        width: CGFloat? = nil,
+        height: CGFloat? = nil,
         alignment: Alignment = .center
     ) -> ModifiedContent<Self, ViewModifiers._Frame> {
         modifier(
             ViewModifiers._Frame(
-                width: width.cgFloat,
-                height: height.cgFloat,
+                width: width,
+                height: height,
                 alignment: alignment
             )
         )
@@ -63,38 +67,27 @@ extension ViewModifiers._Frame: UIKitNodeModifierResolvable {
             "Frame"
         }
 
-        var viewModifier: ViewModifiers._Frame!
+        var frame: ViewModifiers._Frame!
         var environment: EnvironmentValues!
 
         func update(viewModifier: ViewModifiers._Frame, context: inout Context) {
-            self.viewModifier = viewModifier
+            self.frame = viewModifier
             self.environment = context.environment
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
-            viewModifier.layoutAlgorithm(nodes: [node], env: environment)
-                .layoutSize(fitting: proposedSize, pass: pass)
-                .idealSize
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
+            frame.layoutAlgorithm(nodes: [node], env: environment)
+                .size(fitting: proposedSize, pass: pass)
         }
 
-        func layout(
-            in container: Container,
-            bounds: Bounds,
-            pass: LayoutPass,
-            node: SomeUIKitNode
-        ) {
-            let childSize = node.layoutSize(
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
+            let childSize = node.size(
                 fitting: bounds.proposedSize,
                 pass: pass
             )
-            node.layout(
+            node.render(
                 in: container,
-                bounds: bounds.update(
-                    to: CGRect(
-                        origin: CGPoint(x: bounds.rect.minX, y: bounds.rect.minY),
-                        size: childSize
-                    )
-                ),
+                bounds: childSize.aligned(in: bounds, frame.alignment),
                 pass: pass
             )
         }

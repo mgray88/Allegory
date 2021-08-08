@@ -62,17 +62,12 @@ extension ViewModifiers._Offset: UIKitNodeModifierResolvable {
             self.viewModifier = viewModifier
         }
 
-        func layout(
-            in container: Container,
-            bounds: Bounds,
-            pass: LayoutPass,
-            node: SomeUIKitNode
-        ) {
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
             let bounds = bounds.offset(
                 dx: viewModifier.offset.width,
                 dy: viewModifier.offset.height
             )
-            node.layout(in: container, bounds: bounds, pass: pass)
+            node.render(in: container, bounds: bounds, pass: pass)
         }
     }
 

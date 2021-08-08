@@ -66,16 +66,11 @@ extension ViewModifiers._Shadow: UIKitNodeModifierResolvable {
             shadowView.layer.shadowOpacity = 1
         }
 
-        func layout(
-            in container: Container,
-            bounds: Bounds,
-            pass: LayoutPass,
-            node: SomeUIKitNode
-        ) {
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
             shadowView.frame = bounds.rect
             container.view.addSubview(shadowView)
             shadowView.replaceSubnodes {
-                node.layout(
+                node.render(
                     in: container.replacingView(shadowView),
                     bounds: bounds.at(origin: .zero),
                     pass: pass

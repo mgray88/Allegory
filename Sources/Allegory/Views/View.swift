@@ -44,7 +44,7 @@ public protocol View: SomeView {
 
 extension View {
     public var body: SomeView {
-        return (body as Body) as SomeView
+        (body as Body) as SomeView
     }
 }
 
@@ -67,7 +67,7 @@ class ViewNode: UIKitNode {
 
     var propertyStorage: [String: Any] = [:]
     var disposeBag = DisposeBag()
-    var needsViewUpdate: Bool = false
+    var needsViewUpdate = false
 
     func update(view: SomeView, context: Context) {
         self.view = view
@@ -80,12 +80,12 @@ class ViewNode: UIKitNode {
     func update(view: Never, context: Context) {
     }
 
-    func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
-        node.layoutSize(fitting: proposedSize, pass: pass)
+    func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        node.size(fitting: proposedSize, pass: pass)
     }
 
-    func layout(in container: Container, bounds: Bounds, pass: LayoutPass) {
-        node.layout(in: container, bounds: bounds, pass: pass)
+    func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
+        node.render(in: container, bounds: bounds, pass: pass)
     }
 
     private func updateViewIfNeeded() {

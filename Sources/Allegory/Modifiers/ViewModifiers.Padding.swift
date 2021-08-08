@@ -5,7 +5,7 @@
 import Foundation
 
 extension ViewModifiers {
-    public struct _Padding: ViewModifier, Layout {
+    public struct _Padding: ViewModifier {
         internal let top: Double?
         internal let bottom: Double?
         internal let leading: Double?
@@ -27,17 +27,6 @@ extension ViewModifiers {
 
         internal init(_ insets: Double?) {
             (top, bottom, leading, trailing) = (insets, insets, insets, insets)
-        }
-
-        internal func layoutAlgorithm(
-            nodes: [LayoutNode],
-            env: EnvironmentValues
-        ) -> LayoutAlgorithm {
-            LayoutAlgorithms.Padding(
-                padding: self,
-                node: nodes.first!,
-                defaultPadding: env.padding
-            )
         }
     }
 }
@@ -96,28 +85,55 @@ extension ViewModifiers._Padding: UIKitNodeModifierResolvable {
             "Padding"
         }
 
-        var viewModifier: ViewModifiers._Padding!
-        var environment: EnvironmentValues!
+        private var insets: EdgeInsets = .zero
+        private var cache = GeometryCache()
 
         func update(viewModifier: ViewModifiers._Padding, context: inout Context) {
-            self.viewModifier = viewModifier
-            self.environment = context.environment
+            let defaultPadding = context.environment.padding
+            insets = EdgeInsets(
+                top: viewModifier.top ?? defaultPadding,
+                leading: viewModifier.leading ?? defaultPadding,
+                bottom: viewModifier.bottom ?? defaultPadding,
+                trailing: viewModifier.trailing ?? defaultPadding
+            )
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
-            viewModifier.layoutAlgorithm(nodes: [node], env: environment)
-                .layoutSize(fitting: proposedSize, pass: pass)
-                .idealSize
+        func size(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
+            if let geometry = cache.geometry(for: pass, size: proposedSize.orDefault) {
+                return geometry.idealSize
+            }
+            let nodeSize = node.size(
+                fitting: proposedSize.inset(by: insets),
+                pass: pass
+            )
+            let idealSize = CGSize(
+                width: nodeSize.width + CGFloat(insets.leading + insets.trailing),
+                height: nodeSize.height + CGFloat(insets.top + insets.bottom)
+            )
+            cache.update(
+                pass: pass,
+                size: proposedSize.orDefault,
+                geometry: ContentGeometry(idealSize: idealSize, frames: [])
+            )
+            return idealSize
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
-            let geometry = viewModifier
-                .layoutAlgorithm(nodes: [node], env: environment)
-                .layoutSize(fitting: bounds.proposedSize, pass: pass)
-            node.layout(
+        func render(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
+            let size = size(
+                fitting: bounds.proposedSize,
+                pass: pass,
+                node: node
+            )
+            let rect = CGRect(
+                x: insets.leading,
+                y: insets.top,
+                width: Double(size.width) - insets.leading - insets.trailing,
+                height: Double(size.height) - insets.top - insets.bottom
+            )
+            node.render(
                 in: container,
                 bounds: bounds.update(
-                    to: geometry.frames[0]
+                    to: rect
                         .offsetBy(dx: bounds.rect.minX, dy: bounds.rect.minY)
                 ),
                 pass: pass

@@ -94,29 +94,36 @@ extension ViewModifiers._FlexFrame: UIKitNodeModifierResolvable {
             "FlexFrame"
         }
 
-        var viewModifier: ViewModifiers._FlexFrame!
+        var frame: ViewModifiers._FlexFrame!
+        var environment: EnvironmentValues!
 
         func update(viewModifier: ViewModifiers._FlexFrame, context: inout Context) {
-            self.viewModifier = viewModifier
+            self.frame = viewModifier
+            self.environment = context.environment
         }
 
-        func layoutSize(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
-            LayoutAlgorithms
-                .FlexFrame(flexFrame: viewModifier, node: node, screenScale: UIScreen.main.scale)
-                .layoutSize(fitting: proposedSize, pass: pass)
-                .idealSize
+        func size(
+            fitting proposedSize: ProposedSize,
+            pass: LayoutPass,
+            node: SomeUIKitNode
+        ) -> CGSize {
+            frame.layoutAlgorithm(nodes: [node], env: environment)
+                .size(fitting: proposedSize, pass: pass)
         }
 
-        func layout(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
-            let geometry = LayoutAlgorithms
-                .FlexFrame(flexFrame: viewModifier, node: node, screenScale: UIScreen.main.scale)
-                .layoutSize(fitting: bounds.proposedSize, pass: pass)
-            node.layout(
+        func render(
+            in container: Container,
+            bounds: Bounds,
+            pass: LayoutPass,
+            node: SomeUIKitNode
+        ) {
+            let childSize = node.size(
+                fitting: bounds.proposedSize,
+                pass: pass
+            )
+            node.render(
                 in: container,
-                bounds: bounds.update(
-                    to: geometry.frames[0]
-                        .offsetBy(dx: bounds.rect.minX, dy: bounds.rect.minY)
-                ),
+                bounds: childSize.aligned(in: bounds, frame.alignment),
                 pass: pass
             )
         }
