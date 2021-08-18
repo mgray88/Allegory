@@ -45,14 +45,16 @@ extension Spacer: UIKitNodeResolvable {
         }
 
         func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+            let proposed = proposedSize.orMax
             switch context.environment._layoutAxis {
             case .horizontal:
-                return CGSize(width: minLength, height: 0)
+                return CGSize(width: max(minLength, proposed.width), height: 0)
 
             case .vertical:
-                return CGSize(width: 0, height: minLength)
+                return CGSize(width: 0, height: max(minLength, proposed.height))
 
             default:
+                // TODO: How is the spacer supposed to handle ZStack?
                 return CGSize(width: minLength, height: minLength)
             }
         }

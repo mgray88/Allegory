@@ -40,6 +40,10 @@ extension ModifiedContent: View, SomeView
 
 extension ModifiedContent: ViewModifier, SomeViewModifier
     where Content: ViewModifier, Modifier: ViewModifier {
+
+    public func _body(content: _ViewModifier_Content<Self>) -> Never {
+        neverBody("ModifiedContent<ViewModifier, ViewModifier>")
+    }
 }
 
 extension ModifiedContent: Equatable
@@ -83,6 +87,7 @@ extension View {
     ///         .borderedCaption()
     ///
     /// - Parameter modifier: The modifier to apply to this view.
+    @inlinable
     public func modifier<Modifier: ViewModifier>(
         _ modifier: Modifier
     ) -> ModifiedContent<Self, Modifier> {
@@ -110,7 +115,12 @@ extension ModifiedContent: UIKitNodeResolvable
 
         func update(view: ModifiedContent<Content, Modifier>, context: Context) {
             var context = context
-            if let contentNodeModifier = view.modifier
+            if let environmentModifier = view.modifier as? EnvironmentModifier {
+                var context = context
+                environmentModifier.modifyEnvironment(&context.environment)
+                contentNode = view.content
+                    .resolve(context: context, cachedNode: contentNode)
+            } else if let contentNodeModifier = view.modifier
                 .resolve(context: &context, cachedNodeModifier: contentNodeModifier) {
 
                 self.contentNodeModifier = contentNodeModifier

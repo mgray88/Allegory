@@ -18,10 +18,7 @@ public struct Capsule: Shape {
 
     @inlinable
     public func path(in rect: CGRect) -> Path {
-        let radius = min(rect.width, rect.height) / 2
-        guard rect.width >= radius * 2 else { return Path(CGRect.zero) }
-        guard rect.height >= radius * 2 else { return Path(CGRect.zero) }
-        return Path(roundedRect: rect, cornerRadius: radius)
+        .init(storage: .roundedRect(.init(capsule: rect, style: style)))
     }
 
     public var body: _ShapeView<Capsule, ForegroundStyle> {
@@ -31,17 +28,26 @@ public struct Capsule: Shape {
 
 extension Capsule: InsettableShape {
     public struct _Inset: Shape, InsettableShape {
-        internal let inset: CGFloat
+        @usableFromInline
+        internal var inset: CGFloat
 
+        @usableFromInline
+        internal init(inset: CGFloat) {
+            self.inset = inset
+        }
+
+        @inlinable
         public func path(in rect: CGRect) -> Path {
             Path(rect.insetBy(dx: inset, dy: inset))
         }
 
+        @inlinable
         public func inset(by amount: CGFloat) -> Self {
             _Inset(inset: inset + amount)
         }
     }
 
+    @inlinable
     public func inset(by amount: CGFloat) -> _Inset {
         _Inset(inset: amount)
     }

@@ -13,6 +13,7 @@ public struct AnyUIKitNode {
 }
 
 internal protocol SomeUIKitNode: LayoutNode {
+    var needsRebuild: Bool { get set }
     var hierarchyIdentifier: String { get }
     var isSpacer: Bool { get }
     var layoutPriority: Double { get }
@@ -28,6 +29,13 @@ internal protocol UIKitNode: SomeUIKitNode {
 }
 
 extension SomeUIKitNode {
+    internal var needsRebuild: Bool {
+        get {
+            true
+        }
+        set {}
+    }
+
     internal var isSpacer: Bool {
         false
     }

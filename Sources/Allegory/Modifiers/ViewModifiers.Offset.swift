@@ -22,12 +22,12 @@ extension View {
     ///
     /// - Parameter offset: The distance to offset this view.
     /// - Returns: A view that offsets this view by `offset`.
-    @inlinable
-    public func offset(
-        _ offset: CGSize
-    ) -> ModifiedContent<Self, ViewModifiers._Offset> {
-        modifier(ViewModifiers._Offset(offset))
-    }
+//    @inlinable
+//    public func offset(
+//        _ offset: CGSize
+//    ) -> ModifiedContent<Self, ViewModifiers._Offset> {
+//        modifier(ViewModifiers._Offset(offset))
+//    }
 
     /// Offset this view by the specified horizontal and vertical distances.
     ///
@@ -38,13 +38,13 @@ extension View {
     ///   - x: The horizontal distance to offset this view.
     ///   - y: The vertical distance to offset this view.
     /// - Returns: A view that offsets this view by `x` and `y`.
-    @inlinable
-    public func offset(
-        x: CGFloat = 0,
-        y: CGFloat = 0
-    ) -> ModifiedContent<Self, ViewModifiers._Offset> {
-        offset(CGSize(width: x, height: y))
-    }
+//    @inlinable
+//    public func offset(
+//        x: CGFloat = 0,
+//        y: CGFloat = 0
+//    ) -> ModifiedContent<Self, ViewModifiers._Offset> {
+//        offset(CGSize(width: x, height: y))
+//    }
 }
 
 extension ViewModifiers._Offset: UIKitNodeModifierResolvable {

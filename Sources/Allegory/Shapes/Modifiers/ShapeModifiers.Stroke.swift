@@ -3,6 +3,18 @@
 //
 
 extension Shape {
+    @inlinable
+    public func stroke(style: StrokeStyle) -> _StrokedShape<Self> {
+        _StrokedShape(shape: self, style: style)
+    }
+
+    @inlinable
+    public func stroke(lineWidth: CGFloat = 1) -> _StrokedShape<Self> {
+        stroke(style: StrokeStyle(lineWidth: lineWidth))
+    }
+}
+
+extension Shape {
     /// Returns a new shape that is a stroked copy of `self`, using the
     /// contents of `style` to define the stroke characteristics.
     ///
@@ -17,7 +29,7 @@ extension Shape {
         style: StrokeStyle
     ) -> _ShapeView<_StrokedShape<Self>, S> where S: ShapeStyle {
         _ShapeView(
-            shape: _StrokedShape(content: self, strokeStyle: style),
+            shape: _StrokedShape(shape: self, style: style),
             style: content
         )
     }

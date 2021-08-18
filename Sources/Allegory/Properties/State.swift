@@ -2,7 +2,7 @@
 // Created by Mike on 7/29/21.
 //
 
-public protocol StateProperty: DynamicProperty {
+protocol StateProperty: DynamicProperty {
     var storage: StateStorage { get }
 }
 

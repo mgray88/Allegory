@@ -20,6 +20,7 @@ import UIKit
 /// ```
 public protocol View: SomeView {
     associatedtype Body: View
+    @ViewBuilder
     var body: Body { get }
 }
 
@@ -52,6 +53,13 @@ extension View where Body == Never {
     public var body: Never {
         fatalError()
     }
+}
+
+/// A `View` that offers primitive functionality, which renders its `body`
+/// inaccessible.
+protocol _PrimitiveView {
+    func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize
+    func render(in container: Container, bounds: Bounds, pass: LayoutPass)
 }
 
 class ViewNode: UIKitNode {
@@ -111,7 +119,7 @@ class ViewNode: UIKitNode {
                 let key = property.storage.objectTypeIdentifier
                 property.storage.get = { [unowned self] in self.context.environmentObjects[key]! }
                 property.storage.set = { [unowned self] in self.context.environmentObjects[key] = $0 }
-            } else if let property = value as? ObservedObjectProperty {
+            } else if let property = value as? ObservedProperty {
                 property.objectWillChange
                     .subscribe(onNext: { [weak self] in
                         self?.contentWillChange()

@@ -3,7 +3,9 @@
 //
 
 extension ViewModifiers {
-    public struct _Alert: ViewModifier {}
+    public struct _Alert<Actions, Message>: ViewModifier {
+        public let isPresented: Binding<Bool>
+    }
 }
 
 extension View {
@@ -86,8 +88,39 @@ extension View {
         presenting data: T?,
         actions: (T) -> A,
         message: (T) -> M
-    ) -> EmptyView
+    ) -> ModifiedContent<Self, ViewModifiers._Alert<A, M>>
         where S: StringProtocol, A: View, M: View {
-        TODO()
+        modifier(.init(isPresented: Binding(projectedValue: isPresented)))
+    }
+}
+//SwiftUI.AlertModifier<SwiftUI.ModifiedContent<SwiftUI.TupleView<(SwiftUI.Button<SwiftUI.Text>, SwiftUI.Button<SwiftUI.Text>)>, SwiftUI.ButtonStyleModifier<SwiftUI.PlatformItemListButtonStyle>>, SwiftUI.Text>
+
+extension ViewModifiers._Alert: UIKitNodeModifierResolvable {
+    private class Node: UIKitNodeModifier {
+        var hierarchyIdentifier: String {
+            "Alert"
+        }
+
+        func update(
+            viewModifier: ViewModifiers._Alert<Actions, Message>,
+            context: inout Context
+        ) {
+        }
+
+        func render(
+            in container: Container,
+            bounds: Bounds,
+            pass: LayoutPass,
+            node: SomeUIKitNode
+        ) {
+
+        }
+    }
+
+    func resolve(
+        context: Context,
+        cachedNodeModifier: AnyUIKitNodeModifier?
+    ) -> AnyUIKitNodeModifier {
+        (cachedNodeModifier as? Node) ?? Node()
     }
 }

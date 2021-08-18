@@ -55,3 +55,13 @@
     }
 
 #endif
+
+extension CGAffineTransform {
+    /// Transform the point into the transform's coordinate system.
+    public func transform(point: CGPoint) -> CGPoint {
+        CGPoint(
+            x: (a * point.x) + (c * point.y) + tx,
+            y: (b * point.x) + (d * point.y) + ty
+        )
+    }
+}

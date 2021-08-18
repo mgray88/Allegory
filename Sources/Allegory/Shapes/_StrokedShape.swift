@@ -2,13 +2,37 @@
 // Created by Mike on 8/1/21.
 //
 
-public struct _StrokedShape<Content: Shape>: Shape {
-    internal let content: Content
-    internal let strokeStyle: StrokeStyle
+public struct _StrokedShape<S: Shape>: Shape {
+    public var shape: S
+    public var style: StrokeStyle
+
+    @inlinable
+    public init(shape: S, style: StrokeStyle) {
+        self.shape = shape
+        self.style = style
+    }
 
     public func path(in rect: CGRect) -> Path {
-        content.path(in: rect)
+        shape
+            .path(in: rect)
+            .strokedPath(style)
     }
+
+    public typealias AnimatableData = AnimatablePair<S.AnimatableData, StrokeStyle.AnimatableData>
+    public var animatableData: AnimatablePair<S.AnimatableData, StrokeStyle.AnimatableData> {
+        get {
+            .init(
+                shape.animatableData,
+                style.animatableData
+            )
+        }
+        set {
+            shape.animatableData = newValue.first
+            style.animatableData = newValue.second
+        }
+    }
+
+    public typealias Body = _ShapeView<_StrokedShape<S>, ForegroundStyle>
 }
 
 //extension _StrokedShape: InsettableShape {
@@ -39,9 +63,11 @@ extension _StrokedShape: ShapeRenderable {
         bounds: Bounds,
         context: Context
     ) {
-        (style as? ShapeStyleRenderable)?.render(to: layer, context: context)
         layer.path = path(in: bounds.rect).cgPath
-        strokeStyle.apply(to: layer, context: context)
+        self.style.render(to: layer, context: context)
+        (style as? ShapeStyleRenderable)?.render(to: layer, context: context)
+        layer.fillColor = nil
+//        style.render(to: layer, context: context)
     }
 }
 

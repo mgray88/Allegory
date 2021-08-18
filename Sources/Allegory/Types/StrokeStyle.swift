@@ -52,8 +52,20 @@ public struct StrokeStyle : Equatable {
     }
 }
 
-extension StrokeStyle {
-    func apply(to layer: CAShapeLayer, context: Context) {
+extension StrokeStyle: Animatable {
+    public typealias AnimatableData = AnimatablePair<CGFloat, AnimatablePair<CGFloat, CGFloat>>
+    public var animatableData: StrokeStyle.AnimatableData {
+        get {
+            TODO()
+        }
+        set {
+            TODO()
+        }
+    }
+}
+
+extension StrokeStyle: ShapeStyleRenderable {
+    func render(to layer: CAShapeLayer, context: Context) {
         layer.fillColor = nil
         layer.lineWidth = lineWidth
         layer.lineDashPhase = dashPhase

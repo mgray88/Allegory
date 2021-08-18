@@ -15,11 +15,10 @@ extension View {
     public func border<S: ShapeStyle>(
         _ content: S,
         width: CGFloat = 1
-    ) -> ModifiedContent<Self, ViewModifiers._Overlay<_ShapeView<_StrokedShape<Rectangle._Inset>, S>>> {
+    ) -> ModifiedContent<Self, _OverlayModifier<_ShapeView<_StrokedShape<Rectangle._Inset>, S>>> {
         overlay {
             Rectangle()
-                .inset(by: width / 2)
-                .stroke(content, lineWidth: width)
+                .strokeBorder(content, lineWidth: width)
         }
     }
 }

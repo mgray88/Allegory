@@ -44,3 +44,21 @@ extension CGPoint {
         )
     }
 }
+
+extension CGPoint {
+    public func rotate(_ angle: Angle, around origin: Self) -> Self {
+        let cosAngle = CGFloat(cos(angle.radians))
+        let sinAngle = CGFloat(sin(angle.radians))
+        return .init(
+            x: cosAngle * (x - origin.x) - sinAngle * (y - origin.y) + origin.x,
+            y: sinAngle * (x - origin.x) + cosAngle * (y - origin.y) + origin.y
+        )
+    }
+
+    public func offset(by offset: Self) -> Self {
+        .init(
+            x: x + offset.x,
+            y: y + offset.y
+        )
+    }
+}

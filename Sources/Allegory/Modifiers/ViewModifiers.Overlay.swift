@@ -2,16 +2,14 @@
 // Created by Mike on 7/31/21.
 //
 
-extension ViewModifiers {
-    public struct _Overlay<Overlay: View>: ViewModifier {
-        public let alignment: Alignment
-        public let overlay: Overlay
+public struct _OverlayModifier<Overlay: View>: ViewModifier {
+    public let alignment: Alignment
+    public let overlay: Overlay
 
-        @inlinable
-        public init(_ alignment: Alignment, _ overlay: Overlay) {
-            self.alignment = alignment
-            self.overlay = overlay
-        }
+    @inlinable
+    public init(_ alignment: Alignment, _ overlay: Overlay) {
+        self.alignment = alignment
+        self.overlay = overlay
     }
 }
 
@@ -32,29 +30,39 @@ extension View {
     public func overlay<V>(
         alignment: Alignment = .center,
         content: () -> V
-    ) -> ModifiedContent<Self, ViewModifiers._Overlay<V>> where V: View {
-        modifier(ViewModifiers._Overlay(alignment, content()))
+    ) -> ModifiedContent<Self, _OverlayModifier<V>> where V: View {
+        modifier(_OverlayModifier(alignment, content()))
     }
 }
 
-extension ViewModifiers._Overlay: UIKitNodeModifierResolvable {
+extension _OverlayModifier: UIKitNodeModifierResolvable {
     private class Node: UIKitNodeModifier {
         var hierarchyIdentifier: String {
             "Overlay"
         }
 
-        private var overlay: ViewModifiers._Overlay<Overlay>!
+        private var overlay: _OverlayModifier<Overlay>!
         private var overlayNode: SomeUIKitNode!
+        private var childSize: CGSize!
 
-        func update(viewModifier: ViewModifiers._Overlay<Overlay>, context: inout Context) {
+        func update(viewModifier: _OverlayModifier<Overlay>, context: inout Context) {
             self.overlay = viewModifier
             overlayNode = viewModifier.overlay.resolve(context: context, cachedNode: overlayNode)
+        }
+
+        func size(
+            fitting proposedSize: ProposedSize,
+            pass: LayoutPass,
+            node: SomeUIKitNode
+        ) -> CGSize {
+            childSize = node.size(fitting: proposedSize, pass: pass)
+            return childSize
         }
 
         func render(in container: Container, bounds: Bounds, pass: LayoutPass, node: SomeUIKitNode) {
             node.render(in: container, bounds: bounds, pass: pass)
             let overlaySize = overlayNode.size(
-                fitting: bounds.proposedSize, pass: pass
+                fitting: ProposedSize(childSize), pass: pass
             )
             overlayNode.render(
                 in: container,

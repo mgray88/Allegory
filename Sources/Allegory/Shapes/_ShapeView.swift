@@ -21,8 +21,24 @@ public struct _ShapeView<S, SS>: View
         bounds: Bounds,
         context: Context
     ) {
+        print(String(reflecting: Self.self))
         (shape as? ShapeRenderable)?
             .render(style: style, to: layer, bounds: bounds, context: context)
+//        layer.path = shape.path(in: bounds.rect).cgPath
+//        if let color = style.resolve(
+//            for: .resolveStyle(levels: 0..<1),
+//            in: context.environment,
+//            role: S.role
+//        )?.color(at: 0) {
+//            layer.fillColor = color.cgColor
+//        } else if let foregroundStyle = context.environment._foregroundStyle,
+//                  let color = foregroundStyle.resolve(
+//                      for: .resolveStyle(levels: 0..<1),
+//                      in: context.environment,
+//                      role: S.role
+//                  )?.color(at: 0) {
+//            layer.fillColor = color.cgColor
+//        }
     }
 }
 
@@ -31,7 +47,7 @@ extension _ShapeView: UIKitNodeResolvable {
     private class Node: UIKitNode {
 
         var hierarchyIdentifier: String {
-            "ShapeView"
+            "ShapeView<\(S.typeIdentifier),ShapeStyle>"
         }
 
         let layer = CAShapeLayer()

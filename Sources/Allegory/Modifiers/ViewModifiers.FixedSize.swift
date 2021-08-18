@@ -2,19 +2,6 @@
 // Created by Mike on 8/1/21.
 //
 
-extension ViewModifiers {
-    public struct _FixedSize: ViewModifier {
-        public let horizontal: Bool
-        public let vertical: Bool
-
-        @inlinable
-        public init(horizontal: Bool, vertical: Bool) {
-            self.horizontal = horizontal
-            self.vertical = vertical
-        }
-    }
-}
-
 extension View {
     /// Fixes this view at its ideal size in the specified dimensions.
     ///
@@ -33,9 +20,9 @@ extension View {
     public func fixedSize(
         horizontal: Bool = true,
         vertical: Bool = false
-    ) -> ModifiedContent<Self, ViewModifiers._FixedSize> {
+    ) -> ModifiedContent<Self, _FixedSizeLayout> {
         modifier(
-            ViewModifiers._FixedSize(
+            _FixedSizeLayout(
                 horizontal: horizontal,
                 vertical: vertical
             )
@@ -61,12 +48,35 @@ extension View {
     ///
     /// - Returns: A view that fixes this view at its ideal size.
     @inlinable
-    public func fixedSize() -> ModifiedContent<Self, ViewModifiers._FixedSize> {
+    public func fixedSize() -> ModifiedContent<Self, _FixedSizeLayout> {
         fixedSize(horizontal: true, vertical: true)
     }
 }
 
-extension ViewModifiers._FixedSize: UIKitNodeModifierResolvable {
+public struct _FixedSizeLayout {
+    @inlinable
+    public init(horizontal: Bool = true, vertical: Bool = true) {
+        self.horizontal = horizontal
+        self.vertical = vertical
+    }
+
+    @usableFromInline
+    internal var horizontal: Bool
+
+    @usableFromInline
+    internal var vertical: Bool
+}
+
+extension _FixedSizeLayout {
+    public typealias AnimatableData = EmptyAnimatableData
+    public typealias Body = Never
+}
+
+extension _FixedSizeLayout: ViewModifier {}
+
+extension _FixedSizeLayout: Animatable {}
+
+extension _FixedSizeLayout: UIKitNodeModifierResolvable {
 
     private class Node: UIKitNodeModifier {
 
@@ -74,16 +84,20 @@ extension ViewModifiers._FixedSize: UIKitNodeModifierResolvable {
             "FixedSize"
         }
 
-        var viewModifier: ViewModifiers._FixedSize!
+        var viewModifier: _FixedSizeLayout!
 
         func update(
-            viewModifier: ViewModifiers._FixedSize,
+            viewModifier: _FixedSizeLayout,
             context: inout Context
         ) {
             self.viewModifier = viewModifier
         }
 
-        func size(fitting proposedSize: ProposedSize, pass: LayoutPass, node: SomeUIKitNode) -> CGSize {
+        func size(
+            fitting proposedSize: ProposedSize,
+            pass: LayoutPass,
+            node: SomeUIKitNode
+        ) -> CGSize {
             var size = proposedSize
             if viewModifier.horizontal {
                 size.width = nil

@@ -14,7 +14,6 @@ extension ViewModifiers {
 }
 
 extension View {
-    public typealias ModifiedContentEnvironment = ModifiedContent<Self, ViewModifiers._EnvironmentValue>
 
     /// Sets the environment value of the specified key path to the given value.
     ///
@@ -23,31 +22,17 @@ extension View {
     ///     ``EnvironmentValues`` structure to update.
     ///   - value: The new value to set for the item specified by `keyPath`.
     /// - Returns: A view that has the given value set in its environment.
-    @inlinable
-    public func environment<V>(
-        _ keyPath: WritableKeyPath<EnvironmentValues, V>,
-        _ value: V
-    ) -> ModifiedContentEnvironment {
-        modifier(
-            ViewModifiers._EnvironmentValue {
-                $0[keyPath: keyPath] = value
-            }
-        )
-    }
-
-    /// Transforms the environment value of the specified key path with the
-    /// given function.
-    @inlinable
-    public func transformEnvironment<V>(
-        _ keyPath: WritableKeyPath<EnvironmentValues, V>,
-        transform: @escaping (inout V) -> Void
-    ) -> ModifiedContentEnvironment {
-        modifier(
-            ViewModifiers._EnvironmentValue {
-                transform(&$0[keyPath: keyPath])
-            }
-        )
-    }
+//    @inlinable
+//    public func environment<V>(
+//        _ keyPath: WritableKeyPath<EnvironmentValues, V>,
+//        _ value: V
+//    ) -> ModifiedContentEnvironment {
+//        modifier(
+//            ViewModifiers._EnvironmentValue {
+//                $0[keyPath: keyPath] = value
+//            }
+//        )
+//    }
 }
 
 extension ViewModifiers._EnvironmentValue: UIKitNodeModifierResolvable {
@@ -71,7 +56,7 @@ extension View {
     @inlinable
     public func foregroundColor(
         _ color: Color?
-    ) -> ModifiedContentEnvironment {
+    ) -> ModifiedContent<Self, _EnvironmentKeyWritingModifier<Color?>> {
         environment(\.foregroundColor, color)
     }
 
@@ -83,7 +68,7 @@ extension View {
     @inlinable
     public func accentColor(
         _ accentColor: Color?
-    ) -> ModifiedContentEnvironment {
+    ) -> ModifiedContent<Self, _EnvironmentKeyWritingModifier<Color?>> {
         environment(\.accentColor, accentColor)
     }
 
@@ -98,7 +83,7 @@ extension View {
     @inlinable
     public func font(
         _ font: Font
-    ) -> ModifiedContentEnvironment {
+    ) -> ModifiedContent<Self, _EnvironmentKeyWritingModifier<Font>> {
         environment(\.font, font)
     }
 
@@ -110,42 +95,42 @@ extension View {
     @inlinable
     public func multilineTextAlignment(
         _ multilineTextAlignment: TextAlignment
-    ) -> ModifiedContentEnvironment {
+    ) -> ModifiedContent<Self, _EnvironmentKeyWritingModifier<TextAlignment>> {
         environment(\.multilineTextAlignment, multilineTextAlignment)
     }
 
     @inlinable
     public func truncationMode(
         _ truncationMode: Text.TruncationMode
-    ) -> ModifiedContentEnvironment {
+    ) -> ModifiedContent<Self, _EnvironmentKeyWritingModifier<Text.TruncationMode>> {
         environment(\.truncationMode, truncationMode)
     }
 
     @inlinable
     public func lineSpacing(
         _ lineSpacing: Double
-    ) -> ModifiedContentEnvironment {
+    ) -> ModifiedContent<Self, _EnvironmentKeyWritingModifier<Double>> {
         environment(\.lineSpacing, lineSpacing)
     }
 
     @inlinable
     public func allowsTightening(
         _ allowsTightening: Bool
-    ) -> ModifiedContentEnvironment {
+    ) -> ModifiedContent<Self, _EnvironmentKeyWritingModifier<Bool>> {
         environment(\.allowsTightening, allowsTightening)
     }
 
     @inlinable
     public func lineLimit(
         _ lineLimit: Int?
-    ) -> ModifiedContentEnvironment {
+    ) -> ModifiedContent<Self, _EnvironmentKeyWritingModifier<Int?>> {
         environment(\.lineLimit, lineLimit)
     }
 
     @inlinable
     public func minimumScaleFactor(
         _ minimumScaleFactor: Double
-    ) -> ModifiedContentEnvironment {
+    ) -> ModifiedContent<Self, _EnvironmentKeyWritingModifier<Double>> {
         environment(\.minimumScaleFactor, minimumScaleFactor)
     }
 }

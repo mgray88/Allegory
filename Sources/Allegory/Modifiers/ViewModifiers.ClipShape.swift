@@ -15,27 +15,27 @@ extension ViewModifiers {
 
 extension View {
 
-    @inlinable
-    public func clipShape<S: Shape>(
-        _ shape: S
-    ) -> ModifiedContent<Self, ViewModifiers._ClipShape<S>> {
-        modifier(ViewModifiers._ClipShape(shape))
-    }
-
-    @inlinable
-    public func clipped(
-    ) -> ModifiedContent<Self, ViewModifiers._ClipShape<Rectangle>> {
-        modifier(ViewModifiers._ClipShape(Rectangle()))
-    }
-
-    @inlinable
-    public func cornerRadius(
-        _ radius: Double
-    ) -> ModifiedContent<Self, ViewModifiers._ClipShape<RoundedRectangle>> {
-        modifier(
-            ViewModifiers._ClipShape(RoundedRectangle(cornerRadius: radius))
-        )
-    }
+//    @inlinable
+//    public func clipShape<S: Shape>(
+//        _ shape: S
+//    ) -> ModifiedContent<Self, ViewModifiers._ClipShape<S>> {
+//        modifier(ViewModifiers._ClipShape(shape))
+//    }
+//
+//    @inlinable
+//    public func clipped(
+//    ) -> ModifiedContent<Self, ViewModifiers._ClipShape<Rectangle>> {
+//        modifier(ViewModifiers._ClipShape(Rectangle()))
+//    }
+//
+//    @inlinable
+//    public func cornerRadius(
+//        _ radius: Double
+//    ) -> ModifiedContent<Self, ViewModifiers._ClipShape<RoundedRectangle>> {
+//        modifier(
+//            ViewModifiers._ClipShape(RoundedRectangle(cornerRadius: radius))
+//        )
+//    }
 
     @inlinable
     public func cornerRadius(

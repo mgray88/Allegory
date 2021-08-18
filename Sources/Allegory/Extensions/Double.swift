@@ -9,6 +9,7 @@ extension Double {
 }
 
 extension Optional where Wrapped == Double {
+    @usableFromInline
     var cgFloat: CGFloat? {
         switch self {
         case .none: return nil

@@ -10,16 +10,56 @@
 public struct AnyView: View {
     public typealias Body = Swift.Never
 
-    internal let view: SomeView
+    internal let storage: AnyViewStorageBase
 
     /// Create an instance that type-erases `view`.
     public init<V>(_ view: V) where V: View {
-        self.view = view
+        if let anyView = view as? AnyView {
+            self = anyView
+        } else {
+            storage = AnyViewStorage(view: view)
+        }
+    }
+
+    public init<V>(erasing view: V) where V: View {
+        self.init(view)
     }
 }
 
 extension AnyView: UIKitNodeResolvable {
     func resolve(context: Context, cachedNode: SomeUIKitNode?) -> SomeUIKitNode {
+        storage.resolve(context: context, cachedNode: cachedNode)
+    }
+}
+
+internal class AnyViewStorageBase {
+    fileprivate func size() -> CGSize {
+        abstractMethod()
+    }
+    fileprivate func resolve(
+        context: Context,
+        cachedNode: SomeUIKitNode?
+    ) -> SomeUIKitNode {
+        abstractMethod()
+    }
+}
+
+fileprivate class AnyViewStorage<V: View>: AnyViewStorageBase {
+    let view: V
+
+    init(view: V) {
+        self.view = view
+        super.init()
+    }
+
+    override func size() -> CGSize {
+        TODO()
+    }
+
+    override func resolve(
+        context: Context,
+        cachedNode: SomeUIKitNode?
+    ) -> SomeUIKitNode {
         view.resolve(context: context, cachedNode: cachedNode)
     }
 }

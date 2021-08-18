@@ -8,6 +8,9 @@
 /// `EmptyView` represents the absence of a view.
 public struct EmptyView: View {
     public typealias Body = Never
+
+    @inlinable
+    public init() {}
 }
 
 extension EmptyView: UIKitNodeResolvable {

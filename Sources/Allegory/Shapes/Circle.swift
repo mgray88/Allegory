@@ -8,36 +8,40 @@
 /// edge.
 public struct Circle: Shape, Equatable {
 
+    @inlinable
     public init() {}
 
     @inlinable
     public func path(in rect: CGRect) -> Path {
-        guard !rect.isEmpty else { return Path(CGRect.zero) }
-        var rect = rect
-        if rect.width < rect.height {
-            rect.origin.y = (rect.height - rect.width) / 2
-            rect.size.height = rect.width
-        } else if rect.width > rect.height {
-            rect.origin.x = (rect.width - rect.height) / 2
-            rect.size.width = rect.height
-        }
-        return Path(ellipseIn: rect)
+        .init(storage: .ellipse(rect))
     }
+
+    public typealias AnimatableData = EmptyAnimatableData
+    public typealias Body = _ShapeView<Circle, ForegroundStyle>
 }
 
 extension Circle: InsettableShape {
     public struct _Inset: Shape, InsettableShape {
-        internal let inset: CGFloat
+        @usableFromInline
+        internal var inset: CGFloat
 
+        @usableFromInline
+        internal init(inset: CGFloat) {
+            self.inset = inset
+        }
+
+        @inlinable
         public func path(in rect: CGRect) -> Path {
             Path(rect.insetBy(dx: inset, dy: inset))
         }
 
+        @inlinable
         public func inset(by amount: CGFloat) -> Self {
             _Inset(inset: inset + amount)
         }
     }
 
+    @inlinable
     public func inset(by amount: CGFloat) -> _Inset {
         _Inset(inset: amount)
     }

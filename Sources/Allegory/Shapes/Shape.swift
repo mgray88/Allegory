@@ -10,7 +10,7 @@
 /// You can define shapes in relation to an implicit frame of reference, such as
 /// the natural size of the view that contains it. Alternatively, you can define
 /// shapes in terms of absolute coordinates.
-public protocol Shape: View, SomeShape {
+public protocol Shape: Animatable, View, SomeShape {
     /// Trims this shape by a fractional amount based on its representation as a
     /// path.
     ///

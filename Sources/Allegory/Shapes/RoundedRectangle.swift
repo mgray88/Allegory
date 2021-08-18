@@ -15,7 +15,7 @@ public struct RoundedRectangle: Shape, Hashable {
     }
 
     @inlinable
-    public init(cornerRadius: Double, style: RoundedCornerStyle = .circular) {
+    public init(cornerRadius: CGFloat, style: RoundedCornerStyle = .circular) {
         self.cornerSize = CGSize(width: cornerRadius, height: cornerRadius)
         self.style = style
     }
@@ -30,14 +30,16 @@ public struct RoundedRectangle: Shape, Hashable {
 
 extension RoundedRectangle: InsettableShape {
     public struct _Inset: Shape, InsettableShape {
-        internal let inset: CGFloat
+        internal var inset: CGFloat
 
         public func path(in rect: CGRect) -> Path {
             Path(rect.insetBy(dx: inset, dy: inset))
         }
 
         public func inset(by amount: CGFloat) -> Self {
-            _Inset(inset: inset + amount)
+            var copy = self
+            copy.inset += amount
+            return copy
         }
     }
 
