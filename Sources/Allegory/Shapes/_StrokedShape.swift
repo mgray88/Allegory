@@ -60,10 +60,10 @@ extension _StrokedShape: ShapeRenderable {
     func render<Style: ShapeStyle>(
         style: Style,
         to layer: CAShapeLayer,
-        bounds: Bounds,
+        rect: CGRect,
         context: Context
     ) {
-        layer.path = path(in: bounds.rect).cgPath
+        layer.path = path(in: rect).cgPath
         self.style.render(to: layer, context: context)
         (style as? ShapeStyleRenderable)?.render(to: layer, context: context)
         layer.fillColor = nil

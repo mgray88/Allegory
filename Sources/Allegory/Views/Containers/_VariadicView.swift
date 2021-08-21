@@ -160,11 +160,21 @@ extension _VariadicView.Tree: UIKitNodeResolvable
                 }
                 self.nodes = nodes
             } else if let view = view as? ZStack<Content> {
-                nodes = view._tree.content.resolve(
+                let nodes = view._tree.content.resolve(
                     context: context,
                     cachedNodes: nodes ?? []
                 )
-//                self.layoutAlgorithm = view._tree.root.layoutAlgorithm(nodes: nodes, env: context.environment)
+                size = { size, pass in
+                    view._tree.size(fitting: size, for: nodes)
+                }
+                render = { context, bounds in
+                    view._tree.render(
+                        context: context,
+                        bounds: bounds,
+                        nodes: nodes
+                    )
+                }
+                self.nodes = nodes
             } else {
                 fatalError()
             }

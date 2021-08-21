@@ -62,3 +62,12 @@ extension CGPoint {
         )
     }
 }
+
+extension CGPoint {
+    public func applying(_ m: ProjectionTransform) -> CGPoint {
+        CGPoint(
+            x: (m.m11 * x + m.m12 * x + m.m13 * x),
+            y: (m.m21 * y + m.m22 * y + m.m23 * y)
+        )
+    }
+}

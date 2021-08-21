@@ -22,7 +22,7 @@ open class HostingView: ContainerView {
 
     public var context: Context {
         didSet {
-            context.rendered = Renderer(hostingView: self)
+            context.renderer = Renderer(hostingView: self)
         }
     }
 
@@ -37,7 +37,7 @@ open class HostingView: ContainerView {
     public init(rootView: SomeView, context: Context = Context(), cachedNode: AnyUIKitNode? = nil) {
         let renderer = Renderer()
         var context = context
-        context.rendered = renderer
+        context.renderer = renderer
         self.view = rootView
         self.context = context
         self.node = cachedNode?.node ?? rootView.resolve(context: context, cachedNode: nil)

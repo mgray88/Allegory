@@ -24,25 +24,6 @@ public protocol View: SomeView {
     var body: Body { get }
 }
 
-//#if canImport(SwiftUI)
-//import SwiftUI
-//
-//@available(iOS 13, *)
-//public protocol SwiftUIConvertible {
-//    associatedtype SwiftUIView: SwiftUI.View
-//    var swiftUI: SwiftUIView { get }
-//}
-//
-//@available(iOS 13, *)
-//extension View where Self: SwiftUIConvertible
-//    , Body: View
-//    , Body: SwiftUIConvertible {
-//    public var swiftUI: some SwiftUI.View {
-//        (body as Body).swiftUI
-//    }
-//}
-//#endif
-
 extension View {
     public var body: SomeView {
         (body as Body) as SomeView
@@ -53,6 +34,10 @@ extension View where Body == Never {
     public var body: Never {
         fatalError()
     }
+}
+
+extension View {
+    func buildNodeTree() {}
 }
 
 /// A `View` that offers primitive functionality, which renders its `body`
@@ -75,7 +60,7 @@ class ViewNode: UIKitNode {
 
     var propertyStorage: [String: Any] = [:]
     var disposeBag = DisposeBag()
-    var needsViewUpdate = false
+    var needsRebuild = false
 
     func update(view: SomeView, context: Context) {
         self.view = view
@@ -96,11 +81,11 @@ class ViewNode: UIKitNode {
         node.render(in: container, bounds: bounds, pass: pass)
     }
 
-    private func updateViewIfNeeded() {
-        if needsViewUpdate {
-            needsViewUpdate = false
+    func rebuildIfNeeded() {
+        if needsRebuild {
+            needsRebuild = false
             update(view: view, context: context)
-            context.rendered?.setNeedsRendering()
+            context.renderer?.setNeedsRendering()
         }
     }
 
@@ -131,8 +116,8 @@ class ViewNode: UIKitNode {
 
     private func contentWillChange() {
         DispatchQueue.main.async { // runloop?
-            self.needsViewUpdate = true
-            self.updateViewIfNeeded()
+            self.needsRebuild = true
+            self.rebuildIfNeeded()
         }
     }
 

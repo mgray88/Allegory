@@ -132,16 +132,21 @@ public struct EnvironmentValues {
     public var _layoutAxis: Axis? = nil
 }
 
-public struct _EnvironmentValuesWritingModifier: ViewModifier, EnvironmentModifier {
+public struct _EnvironmentKeyTransformModifier<Value>: ViewModifier, EnvironmentModifier {
+    public var keyPath: WritableKeyPath<EnvironmentValues, Value>
+    public var transform: (inout Value) -> Void
 
-    public let modifyEnvironment: (inout EnvironmentValues) -> Void
-
-    public init(modifyEnvironment: @escaping (inout EnvironmentValues) -> Void) {
-        self.modifyEnvironment = modifyEnvironment
+    @inlinable
+    public init(
+        keyPath: WritableKeyPath<EnvironmentValues, Value>,
+        transform: @escaping (inout Value) -> Void
+    ) {
+        self.keyPath = keyPath
+        self.transform = transform
     }
 
     func modifyEnvironment(_ values: inout EnvironmentValues) {
-        modifyEnvironment(&values)
+        transform(&values[keyPath: keyPath])
     }
 }
 
@@ -153,11 +158,38 @@ extension View {
     public func transformEnvironment<V>(
         _ keyPath: WritableKeyPath<EnvironmentValues, V>,
         transform: @escaping (inout V) -> Void
-    ) -> ModifiedContent<Self, _EnvironmentValuesWritingModifier> {
+    ) -> ModifiedContent<Self, _EnvironmentKeyTransformModifier<V>> {
         modifier(
-            _EnvironmentValuesWritingModifier {
-                transform(&$0[keyPath: keyPath])
-            }
+            _EnvironmentKeyTransformModifier(
+                keyPath: keyPath,
+                transform: transform
+            )
         )
     }
+}
+
+extension EnvironmentValues {
+    private enum IsEnabledKey: EnvironmentKey {
+        static let defaultValue: Bool = true
+    }
+
+    public var isEnabled: Swift.Bool {
+        get { self[IsEnabledKey.self] }
+        set { self[IsEnabledKey.self] = newValue }
+    }
+}
+
+extension View {
+    @inlinable
+    public func disabled(
+        _ disabled: Bool
+    ) -> ModifiedContent<Self, _EnvironmentKeyTransformModifier<Bool>> {
+        modifier(
+            _EnvironmentKeyTransformModifier(
+                keyPath: \.isEnabled,
+                transform: { $0 = $0 && !disabled }
+            )
+        )
+    }
+
 }

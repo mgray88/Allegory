@@ -6,7 +6,7 @@ import UIKit
 
 /// A view that displays an image.
 ///
-/// Use an `Image` instance when you want to add images to your TOCUIKit app.
+/// Use an `Image` instance when you want to add images to your Allegory app.
 /// You can create images from many sources:
 ///
 /// * Image files in your app's asset library or bundle. Supported types include
@@ -35,9 +35,7 @@ import UIKit
 /// ``View/aspectRatio(_:contentMode:)-771ow`` view modifier adjusts
 /// this resizing behavior to maintain the image's original aspect ratio, rather
 /// than scaling the x- and y-axes independently to fill all four sides of the
-/// view. The article
-/// <doc:Fitting-Images-into-Available-Space> shows how to apply scaling,
-/// clipping, and tiling to `Image` instances of different sizes.
+/// view.
 ///
 /// An `Image` is a late-binding token; the system resolves its actual value
 /// only when it's about to use the image in an environment.
@@ -53,12 +51,16 @@ import UIKit
 public struct Image: View, Hashable {
     public typealias Body = Swift.Never
 
-    internal let name: String
-    internal let bundle: Bundle?
-    internal let label: Text?
-    internal var isResizable = false
-    internal var capInsets: EdgeInsets?
-    internal var resizingMode: ResizingMode?
+    @usableFromInline
+    internal let provider: AnyImageProviderBox
+
+    @inlinable
+    internal init(_ provider: AnyImageProviderBox) {
+        self.provider = provider
+    }
+}
+
+extension Image {
 
     /// Creates a labeled image that you can use as content for controls.
     ///
@@ -66,12 +68,11 @@ public struct Image: View, Hashable {
     ///   - name: The name of the image resource to lookup, as well as the
     ///     localization key with which to label the image.
     ///   - bundle: The bundle to search for the image resource and localization
-    ///     content. If `nil`, TOCUIKit uses the main `Bundle`. Defaults to
+    ///     content. If `nil`, Allegory uses the main `Bundle`. Defaults to
     ///     `nil`.
+    @inlinable
     public init(_ name: String, bundle: Bundle? = nil) {
-        self.name = name
-        self.bundle = bundle
-        self.label = Text(name)
+        self.init(NamedImageProvider(name: name, bundle: bundle, label: Text(name)))
     }
 
     /// Creates a labeled image that you can use as content for controls, with
@@ -80,107 +81,278 @@ public struct Image: View, Hashable {
     /// - Parameters:
     ///   - name: The name of the image resource to lookup
     ///   - bundle: The bundle to search for the image resource. If `nil`,
-    ///     TOCUIKit uses the main `Bundle`. Defaults to `nil`.
-    ///   - label: The label associated with the image. TOCUIKit uses the label
+    ///     Allegory uses the main `Bundle`. Defaults to `nil`.
+    ///   - label: The label associated with the image. Allegory uses the label
     ///     for accessibility.
+    @inlinable
     public init(_ name: String, bundle: Bundle? = nil, label: Text) {
-        self.name = name
-        self.bundle = bundle
-        self.label = label
+        self.init(NamedImageProvider(name: name, bundle: bundle, label: label))
     }
 
     /// Creates an unlabeled, decorative image.
     ///
-    /// TOCUIKit ignores this image for accessibility purposes.
+    /// Allegory ignores this image for accessibility purposes.
     ///
     /// - Parameters:
     ///   - name: The name of the image resource to lookup
     ///   - bundle: The bundle to search for the image resource. If `nil`,
-    ///     TOCUIKit uses the main `Bundle`. Defaults to `nil`.
+    ///     Allegory uses the main `Bundle`. Defaults to `nil`.
+    @inlinable
     public init(decorative name: String, bundle: Bundle? = nil) {
-        self.name = name
-        self.bundle = bundle
-        self.label = nil
+        self.init(NamedImageProvider(name: name, bundle: bundle, label: nil))
+    }
+
+    /// Creates a system symbol image.
+    ///
+    /// This initializer creates an image using a system-provided symbol. To
+    /// create a custom symbol image from your app's asset catalog, use
+    /// ``Image/init(_:bundle:)`` instead.
+    ///
+    /// - Parameters:
+    ///   - systemName: The name of the system symbol image.
+    ///     Use the SF Symbols app to look up the names of system symbol images.
+    @available(iOS 13.0, *)
+    public init(systemName: String) {
+        self.init(SystemImageProvider(systemName: systemName))
     }
 }
 
 extension Image {
-    /// Sets the mode by which TOCUIKit resizes an image to fit its space.
+    /// Sets the mode by which Allegory resizes an image to fit its space.
     ///
     /// - Parameters:
     ///   - capInsets: Inset values that indicate a portion of the image that
-    ///     TOCUIKit doesn't resize.
-    ///   - resizingMode: The mode by which TOCUIKit resizes the image.
+    ///     Allegory doesn't resize.
+    ///   - resizingMode: The mode by which Allegory resizes the image.
     /// - Returns: An image, with the new resizing behavior set.
     public func resizable(
         capInsets: EdgeInsets = EdgeInsets(),
         resizingMode: Image.ResizingMode = .stretch
     ) -> Image {
-        var copy = self
-        copy.isResizable = true
-        copy.capInsets = capInsets
-        copy.resizingMode = resizingMode
-        return copy
+        Image(
+            ResizableProvider(
+                parent: self.provider,
+                capInsets: capInsets,
+                resizingMode: resizingMode
+            )
+        )
     }
 }
 
 extension Image: UIKitNodeResolvable {
-    private class Node: UIKitNode {
+    private class Node: UIImageView, UIKitNode {
         var hierarchyIdentifier: String {
             "Image"
         }
 
         var imageView: Image!
-        var uiImage: UIImage?
-
-        let uiImageView = UIImageView()
+        var resizable: Bool!
 
         func update(view: Image, context: Context) {
             imageView = view
-            uiImage = UIImage(named: view.name)
-            if imageView.isResizable,
-               let capInsets = imageView.capInsets {
-                if let resizingMode = imageView.resizingMode {
-                    uiImage = uiImage?.resizableImage(
-                        withCapInsets: capInsets.uiEdgeInsets,
-                        resizingMode: resizingMode.uiImageResizingMode
-                    )
-                } else {
-                    uiImage = uiImage?.resizableImage(
-                        withCapInsets: capInsets.uiEdgeInsets
-                    )
-                }
-            }
-            if let label = imageView.label {
-                uiImageView.isAccessibilityElement = true
+            let resolved = view.provider.resolve(in: context.environment)
+            image = resolved.image
+            resizable = resolved.isResizable
+            if let label = resolved.label {
+                self.isAccessibilityElement = true
                 if #available(iOS 11.0, *) {
-                    uiImageView.accessibilityAttributedLabel =
+                    self.accessibilityAttributedLabel =
                         label.storage.attributedStringValue(baseFont: .body)
                 } else {
-                    uiImageView.accessibilityLabel =
+                    self.accessibilityLabel =
                         label.storage.stringValue
                 }
             } else {
-                uiImageView.isAccessibilityElement = false
+                self.isAccessibilityElement = false
             }
-            uiImageView.image = uiImage
         }
 
         func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
-            if imageView.isResizable {
-                return proposedSize.or(uiImage?.size)
+            if resizable {
+                return proposedSize.or(image?.size)
             } else {
-                return uiImage?.size ?? .zero
+                return image?.size ?? .zero
             }
         }
 
         func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
-            container.view.addSubview(uiImageView)
-            uiImageView.frame = bounds.rect
+            container.view.addSubview(self)
+            self.frame = bounds.rect
         }
     }
 
     func resolve(context: Context, cachedNode: SomeUIKitNode?) -> SomeUIKitNode {
         (cachedNode as? Node) ?? Node()
+    }
+}
+
+@usableFromInline
+internal class AnyImageProviderBox: AnyTokenBox, Hashable {
+    @usableFromInline
+    internal struct _Image {
+        internal indirect enum Storage {
+            case named(String, bundle: Bundle?)
+            case systemName(String)
+            case resizable(Storage, capInsets: EdgeInsets, resizingMode: Image.ResizingMode)
+
+            fileprivate var image: UIImage? {
+                switch self {
+                case let .named(name, bundle):
+                    return UIImage(named: name, in: bundle, compatibleWith: nil)
+
+                case let .systemName(systemName):
+                    if #available(iOS 13, *) {
+                        return UIImage(systemName: systemName)
+                    }
+                    return nil
+
+                case let .resizable(parent, capInsets, resizingMode):
+                    guard let parent = parent.image else { return nil }
+                    return parent.resizableImage(
+                        withCapInsets: capInsets.uiEdgeInsets,
+                        resizingMode: resizingMode.uiImageResizingMode
+                    )
+                }
+            }
+        }
+
+        internal let storage: Storage
+        internal let label: Text?
+        internal var isResizable: Bool {
+            guard case .resizable = storage else { return false }
+            return true
+        }
+        internal var image: UIImage? { storage.image }
+    }
+
+    @inlinable
+    internal static func == (lhs: AnyImageProviderBox, rhs: AnyImageProviderBox) -> Bool {
+        lhs.equals(rhs)
+    }
+
+    @inlinable
+    internal func hash(into hasher: inout Hasher) {
+        fatalError("implement \(#function) in subclass")
+    }
+
+    @inlinable
+    internal func equals(_ other: AnyImageProviderBox) -> Bool {
+        fatalError("implement \(#function) in subclass")
+    }
+
+    @inlinable
+    internal func resolve(in environment: EnvironmentValues) -> _Image {
+        fatalError("implement \(#function) in subclass")
+    }
+}
+
+//extension AnyImageProviderBox: UIKitNode {
+//    var hierarchyIdentifier: String {
+//        "Image"
+//    }
+//
+//    func update(view: Image, context: Context) {
+//
+//    }
+//
+//    func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+//
+//    }
+//
+//    func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
+//
+//    }
+//}
+
+@usableFromInline
+internal class NamedImageProvider: AnyImageProviderBox {
+    let name: String
+    let bundle: Bundle?
+    let label: Text?
+
+    @usableFromInline
+    init(name: String, bundle: Bundle?, label: Text?) {
+        self.name = name
+        self.bundle = bundle
+        self.label = label
+    }
+
+    override func hash(into hasher: inout Hasher) {
+        name.hash(into: &hasher)
+        bundle?.hash(into: &hasher)
+        label?.hash(into: &hasher)
+    }
+
+    override func equals(_ other: AnyImageProviderBox) -> Bool {
+        guard let other = other as? NamedImageProvider else { return false }
+        return other.name == name
+            && other.bundle?.bundlePath == bundle?.bundlePath
+            && other.label == label
+    }
+
+    override func resolve(in environment: EnvironmentValues) -> ResolvedValue {
+        .init(storage: .named(name, bundle: bundle), label: label)
+    }
+}
+
+@usableFromInline
+internal class SystemImageProvider: AnyImageProviderBox {
+    let systemName: String
+
+    @usableFromInline
+    init(systemName: String) {
+        self.systemName = systemName
+    }
+
+    override func hash(into hasher: inout Hasher) {
+        systemName.hash(into: &hasher)
+    }
+
+    override func equals(_ other: AnyImageProviderBox) -> Bool {
+        guard let other = other as? SystemImageProvider else { return false }
+        return systemName == other.systemName
+    }
+
+    override func resolve(in environment: EnvironmentValues) -> ResolvedValue {
+        .init(storage: .systemName(systemName), label: nil)
+    }
+}
+
+@usableFromInline
+internal class ResizableProvider: AnyImageProviderBox {
+    let parent: AnyImageProviderBox
+    let capInsets: EdgeInsets
+    let resizingMode: Image.ResizingMode
+
+    @usableFromInline
+    init(parent: AnyImageProviderBox, capInsets: EdgeInsets, resizingMode: Image.ResizingMode) {
+        self.parent = parent
+        self.capInsets = capInsets
+        self.resizingMode = resizingMode
+    }
+
+    override func hash(into hasher: inout Hasher) {
+        parent.hash(into: &hasher)
+        capInsets.hash(into: &hasher)
+        resizingMode.hash(into: &hasher)
+    }
+
+    override func equals(_ other: AnyImageProviderBox) -> Bool {
+        guard let other = other as? ResizableProvider else { return false }
+        return other.parent.equals(parent)
+            && other.capInsets == capInsets
+            && other.resizingMode == resizingMode
+    }
+
+    override func resolve(in environment: EnvironmentValues) -> ResolvedValue {
+        let resolved = parent.resolve(in: environment)
+        return .init(
+            storage: .resizable(
+                resolved.storage,
+                capInsets: capInsets,
+                resizingMode: resizingMode
+            ),
+            label: resolved.label
+        )
     }
 }

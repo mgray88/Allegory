@@ -63,10 +63,10 @@ extension _VariadicView.Tree where Root == _VStackLayout, Content: View {
     }
 
     func render(context: RenderingContext, bounds: Bounds, nodes: [SomeUIKitNode]) {
-        let stackX = root.alignment.alignmentID.defaultValue(in: bounds.size)
+        let stackX = root.alignment.alignmentID.defaultValue(in: .init(bounds.size))
         var currentY: CGFloat = 0
         zip(nodes, sizes).forEach { child, childSize in
-            let childX = root.alignment.alignmentID.defaultValue(in: childSize)
+            let childX = root.alignment.alignmentID.defaultValue(in: .init(childSize))
             child.render(
                 in: context.container,
                 bounds: Bounds(

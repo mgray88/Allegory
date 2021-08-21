@@ -2,32 +2,6 @@
 // Created by Mike on 8/14/21.
 //
 
-public struct _OffsetEffect: GeometryEffect, Equatable {
-    public var offset: CGSize
-
-    @inlinable
-    public init(offset: CGSize) {
-        self.offset = offset
-    }
-
-    public func effectValue(size: CGSize) -> ProjectionTransform {
-        .init(.init(translationX: offset.width, y: offset.height))
-    }
-
-    public var animatableData: CGSize.AnimatableData {
-        get {
-            offset.animatableData
-        }
-        set {
-            offset.animatableData = newValue
-        }
-    }
-
-    public func body(content: Content) -> SomeView {
-        content
-    }
-}
-
 extension View {
 
     /// Offset this view by the horizontal and vertical amount specified in the
@@ -60,5 +34,66 @@ extension View {
         y: CGFloat = 0
     ) -> ModifiedContent<Self, _OffsetEffect> {
         offset(CGSize(width: x, height: y))
+    }
+}
+
+public struct _OffsetEffect: GeometryEffect, Equatable {
+    public var offset: CGSize
+
+    @inlinable
+    public init(offset: CGSize) {
+        self.offset = offset
+    }
+
+    public func effectValue(size: CGSize) -> ProjectionTransform {
+        .init(.init(translationX: offset.width, y: offset.height))
+    }
+
+    public var animatableData: CGSize.AnimatableData {
+        get {
+            offset.animatableData
+        }
+        set {
+            offset.animatableData = newValue
+        }
+    }
+}
+
+extension _OffsetEffect: UIKitNodeModifierResolvable {
+    private class Node: UIKitNodeModifier {
+        var hierarchyIdentifier: String {
+            "_OffsetEffect"
+        }
+
+        var offset: CGSize!
+
+        func update(viewModifier: _OffsetEffect, context: inout Context) {
+            offset = viewModifier.offset
+        }
+
+        func render(
+            in container: Container,
+            bounds: Bounds,
+            pass: LayoutPass,
+            node: SomeUIKitNode
+        ) {
+            node.render(
+                in: container,
+                bounds: bounds.offset(dx: offset.width, dy: offset.height),
+                pass: pass
+            )
+        }
+    }
+
+    func resolve(
+        context: Context,
+        cachedNodeModifier: AnyUIKitNodeModifier?
+    ) -> AnyUIKitNodeModifier {
+        (cachedNodeModifier as? Node) ?? Node()
+    }
+}
+
+extension _OffsetEffect: _PrimitiveViewModifier {
+    func modify(view: UIView) {
     }
 }

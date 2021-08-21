@@ -2,6 +2,45 @@
 // Created by Mike on 8/14/21.
 //
 
+extension View {
+
+    /// Applies the given animation to this view when the specified value
+    /// changes.
+    ///
+    /// - Parameters:
+    ///   - animation: The animation to apply. If `animation` is `nil`, the view
+    ///     doesn't animate.
+    ///   - value: A value to monitor for changes.
+    ///
+    /// - Returns: A view that applies `animation` to this view whenever `value`
+    ///   changes.
+    @inlinable
+    public func animation<V>(
+        _ animation: Animation?,
+        value: V
+    ) -> ModifiedContent<Self, _AnimationModifier<V>> where V: Equatable {
+        modifier(_AnimationModifier(animation: animation, value: value))
+    }
+}
+
+extension View where Self: Equatable {
+
+    /// Applies the given animation to this view when this view changes.
+    ///
+    /// - Parameters:
+    ///   - animation: The animation to apply. If `animation` is `nil`, the view
+    ///     doesn't animate.
+    ///
+    /// - Returns: A view that applies `animation` to this view whenever it
+    ///   changes.
+    @inlinable
+    public func animation(
+        _ animation: Animation?
+    ) -> _AnimationView<Self> {
+        _AnimationView(content: self, animation: animation)
+    }
+}
+
 /// This default is specified in SwiftUI on `Animation.timingCurve` as `0.35`.
 public let defaultDuration = 0.35
 
@@ -212,44 +251,5 @@ public struct _AnimationView<Content>: View
     public var body: SomeView {
         content
             .modifier(_AnimationModifier(animation: animation, value: content))
-    }
-}
-
-public extension View {
-
-    /// Applies the given animation to this view when the specified value
-    /// changes.
-    ///
-    /// - Parameters:
-    ///   - animation: The animation to apply. If `animation` is `nil`, the view
-    ///     doesn't animate.
-    ///   - value: A value to monitor for changes.
-    ///
-    /// - Returns: A view that applies `animation` to this view whenever `value`
-    ///   changes.
-    @inlinable
-    func animation<V>(
-        _ animation: Animation?,
-        value: V
-    ) -> ModifiedContent<Self, _AnimationModifier<V>> where V: Equatable {
-        modifier(_AnimationModifier(animation: animation, value: value))
-    }
-}
-
-public extension View where Self: Equatable {
-
-    /// Applies the given animation to this view when this view changes.
-    ///
-    /// - Parameters:
-    ///   - animation: The animation to apply. If `animation` is `nil`, the view
-    ///     doesn't animate.
-    ///
-    /// - Returns: A view that applies `animation` to this view whenever it
-    ///   changes.
-    @inlinable
-    func animation(
-        _ animation: Animation?
-    ) -> _AnimationView<Self> {
-        _AnimationView(content: self, animation: animation)
     }
 }

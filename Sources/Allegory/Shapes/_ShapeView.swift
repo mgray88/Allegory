@@ -18,12 +18,12 @@ public struct _ShapeView<S, SS>: View
 
     internal func render(
         to layer: CAShapeLayer,
-        bounds: Bounds,
+        rect: CGRect,
         context: Context
     ) {
         print(String(reflecting: Self.self))
         (shape as? ShapeRenderable)?
-            .render(style: style, to: layer, bounds: bounds, context: context)
+            .render(style: style, to: layer, rect: rect, context: context)
 //        layer.path = shape.path(in: bounds.rect).cgPath
 //        if let color = style.resolve(
 //            for: .resolveStyle(levels: 0..<1),
@@ -44,20 +44,26 @@ public struct _ShapeView<S, SS>: View
 
 extension _ShapeView: UIKitNodeResolvable {
 
-    private class Node: UIKitNode {
+    private class Node: UIView, UIKitNode {
+        override class var layerClass: AnyClass {
+            CAShapeLayer.self
+        }
+
+        override var layer: CAShapeLayer {
+            super.layer as! CAShapeLayer
+        }
 
         var hierarchyIdentifier: String {
             "ShapeView<\(S.typeIdentifier),ShapeStyle>"
         }
 
-        let layer = CAShapeLayer()
         var makePath: ((CGRect) -> Path)!
-        var render: ((CAShapeLayer, Bounds) -> Void)!
+        var render: ((CAShapeLayer, CGRect) -> Void)!
 
         func update(view: _ShapeView<S, SS>, context: Context) {
             makePath = view.shape.path(in:)
-            render = { layer, bounds in
-                view.render(to: layer, bounds: bounds, context: context)
+            render = { layer, rect in
+                view.render(to: layer, rect: rect, context: context)
             }
         }
 
@@ -66,11 +72,12 @@ extension _ShapeView: UIKitNodeResolvable {
         }
 
         func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
-            render(layer, bounds)
-            layer.removeAllAnimations()
-            // TODO: Do we need to remove a layer first?
-            // Say if a node is cached, but needs to be relayouted
-            container.layer.addSublayer(layer)
+            frame = bounds.rect
+            let bounds = bounds.at(origin: .zero)
+            let path = makePath(bounds.rect)
+            layer.path = path.cgPath
+            render(layer, bounds.rect)
+            container.view.addSubview(self)
         }
     }
 

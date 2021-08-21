@@ -26,6 +26,7 @@ internal protocol UIKitNode: SomeUIKitNode {
     associatedtype View: SomeView
 
     func update(view: View, context: Context)
+//    func rebuildIfNeeded()
 }
 
 extension SomeUIKitNode {

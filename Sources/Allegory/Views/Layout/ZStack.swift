@@ -62,7 +62,10 @@ public struct ZStack<Content: View>: View {
     ///     the x- and y-axes.
     ///   - content: A view builder that creates the content of this stack.
     @inlinable
-    public init(alignment: Alignment = .center, @ViewBuilder content: () -> Content) {
+    public init(
+        alignment: Alignment = .center,
+        @ViewBuilder content: () -> Content
+    ) {
         _tree = .init(
             root: .init(
                 alignment: alignment
@@ -78,6 +81,49 @@ public struct _ZStackLayout {
     @inlinable
     public init(alignment: Alignment = .center) {
         self.alignment = alignment
+    }
+}
+
+extension _VariadicView.Tree where Root == _ZStackLayout, Content: View {
+    func size(
+        fitting proposed: ProposedSize,
+        for nodes: [SomeUIKitNode]
+    ) -> CGSize {
+        layout(fitting: proposed, for: nodes)
+        let width: CGFloat = sizes.reduce(0) { max($0, $1.width) }
+        let height: CGFloat = sizes.reduce(0) { max($0, $1.height) }
+        return CGSize(width: width, height: height)
+    }
+
+    func render(
+        context: RenderingContext,
+        bounds: Bounds,
+        nodes: [SomeUIKitNode]
+    ) {
+        let stackAlignment = root.alignment.point(for: bounds.size)
+        zip(nodes, sizes).forEach { child, childSize in
+            let childAlignment = root.alignment.point(for: childSize)
+            child.render(
+                in: context.container,
+                bounds: Bounds(
+                    rect: CGRect(
+                        origin: stackAlignment - childAlignment,
+                        size: childSize
+                    ).offsetBy(dx: bounds.rect.minX, dy: bounds.rect.minY),
+                    safeAreaInsets: .zero
+                ),
+                pass: LayoutPass()
+            )
+        }
+    }
+
+    func layout(
+        fitting proposed: ProposedSize,
+        for nodes: [SomeUIKitNode]
+    ) {
+        sizes = nodes.map { child in
+            child.size(fitting: proposed, pass: LayoutPass())
+        }
     }
 }
 

@@ -7,7 +7,7 @@ public struct Context {
 
     public var environmentObjects: [String: Any] = [:]
 
-    public var rendered: Renderer? = nil
+    public var renderer: Renderer? = nil
 
     public init() {}
 }

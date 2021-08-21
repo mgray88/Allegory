@@ -57,7 +57,7 @@ public struct RxObservedObject<ObjectType>: ObservedProperty
     ///
     /// This property provides primary access to the value's data. However, you
     /// don't access `wrappedValue` directly. Instead, you use the property
-    /// variable created with the `@ObservedObject` attribute.
+    /// variable created with the `@RxObservedObject` attribute.
     ///
     /// When a mutable value changes, the new value is immediately available.
     /// However, a view displaying the value is updated asynchronously and may

@@ -2,6 +2,8 @@
 // Created by Mike on 8/5/21.
 //
 
+import UIKit
+
 extension ViewModifiers {
     public struct _ClipShape<S: Shape>: ViewModifier {
         public let shape: S

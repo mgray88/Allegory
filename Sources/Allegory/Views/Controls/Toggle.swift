@@ -2,6 +2,8 @@
 // Created by Mike on 8/7/21.
 //
 
+import UIKit
+
 public struct Toggle<Label>: View where Label: View {
 
     internal let isOn: Binding<Bool>

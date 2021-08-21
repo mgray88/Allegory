@@ -2,25 +2,6 @@
 // Created by Mike on 8/14/21.
 //
 
-public struct _ScaleEffect: GeometryEffect, Equatable {
-    public var scale: CGSize
-    public var anchor: UnitPoint
-
-    @inlinable
-    public init(scale: CGSize, anchor: UnitPoint = .center) {
-        self.scale = scale
-        self.anchor = anchor
-    }
-
-    public func effectValue(size: CGSize) -> ProjectionTransform {
-        .init(.init(scaleX: scale.width, y: scale.height))
-    }
-
-    public func body(content: Content) -> SomeView {
-        content
-    }
-}
-
 extension View {
 
     /// Scales this view's rendered output by the given vertical and horizontal
@@ -103,5 +84,35 @@ extension View {
         anchor: UnitPoint = .center
     ) -> ModifiedContent<Self, _ScaleEffect> {
         scaleEffect(CGSize(width: x, height: y), anchor: anchor)
+    }
+}
+
+public struct _ScaleEffect: GeometryEffect, Equatable {
+    public var scale: CGSize
+    public var anchor: UnitPoint
+
+    @inlinable
+    public init(scale: CGSize, anchor: UnitPoint = .center) {
+        self.scale = scale
+        self.anchor = anchor
+    }
+
+    public func effectValue(size: CGSize) -> ProjectionTransform {
+        .init(.init(scaleX: scale.width, y: scale.height))
+    }
+
+    public var animatableData: AnimatablePair<CGSize.AnimatableData, UnitPoint.AnimatableData> {
+        get {
+            .init(scale.animatableData, anchor.animatableData)
+        }
+        set {
+            (scale.animatableData, anchor.animatableData) = newValue[]
+        }
+    }
+}
+
+extension _ScaleEffect: _PrimitiveViewModifier {
+    func modify(view: UIView) {
+
     }
 }

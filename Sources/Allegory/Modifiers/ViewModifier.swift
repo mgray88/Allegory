@@ -54,6 +54,10 @@ public protocol ViewModifier: SomeViewModifier {
     func body(content: Content) -> SomeView
 }
 
+internal protocol _PrimitiveViewModifier {
+    func modify(view: UIView)
+}
+
 extension ViewModifier {
     public func body(content: SomeView) -> SomeView {
         body(content: Content(content, modifier: self))

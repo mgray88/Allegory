@@ -20,6 +20,13 @@ extension SomeView {
         }
     }
 
+//    internal func buildNodeTree(cached: SomeUIKitNode?) -> SomeUIKitNode {
+//        if let primitive = self as? _PrimitiveView {
+//
+//        }
+//        body.buildNodeTree(cached: cached)
+//    }
+
     internal func resolve(context: Context, cachedNode: SomeUIKitNode?) -> SomeUIKitNode {
         let resolvedNode: SomeUIKitNode
         if let view = self as? UIKitNodeResolvable {

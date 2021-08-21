@@ -4,7 +4,11 @@
 
 /// An alignment position along the horizontal axis.
 public struct HorizontalAlignment: Equatable {
+    @usableFromInline
     internal let alignmentID: AlignmentID.Type
+
+    @usableFromInline
+    internal let key: AlignmentKey = .init()
 
     /// Creates an instance with the given identifier.
     ///
@@ -36,7 +40,11 @@ extension HorizontalAlignment {
 
 /// An alignment position along the vertical axis.
 public struct VerticalAlignment: Equatable {
+    @usableFromInline
     internal let alignmentID: AlignmentID.Type
+
+    @usableFromInline
+    internal let key: AlignmentKey = .init()
 
     /// Creates an instance with the given identifier.
     ///
@@ -153,8 +161,8 @@ extension HorizontalAlignment {
 
 extension Alignment {
     func point(for size: CGSize) -> CGPoint {
-        let x = horizontal.alignmentID.defaultValue(in: size)
-        let y = vertical.alignmentID.defaultValue(in: size)
+        let x = horizontal.alignmentID.defaultValue(in: ViewDimensions(size))
+        let y = vertical.alignmentID.defaultValue(in: ViewDimensions(size))
         return CGPoint(x: x, y: y)
     }
 }

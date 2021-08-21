@@ -12,7 +12,7 @@ public protocol AnyUIViewRepresentable: SomeView {
 }
 
 /// A wrapper for a UIKit view that you use to integrate that view into your
-/// TOCUIKit view hierarchy.
+/// Allegory view hierarchy.
 public protocol UIViewRepresentable: AnyUIViewRepresentable, View where Body == Never {
     /// The type of view to present.
     associatedtype UIViewType: UIView
@@ -23,7 +23,7 @@ public protocol UIViewRepresentable: AnyUIViewRepresentable, View where Body == 
     typealias Context = UIViewRepresentableContext<Self>
 
     /// Creates the custom instance that you use to communicate changes from
-    /// your view to other parts of your TOCUIKit interface.
+    /// your view to other parts of your Allegory interface.
     ///
     /// - Returns:
     func makeCoordinator() -> Coordinator
@@ -42,10 +42,10 @@ public protocol UIViewRepresentable: AnyUIViewRepresentable, View where Body == 
     func makeUIView(context: Context) -> UIViewType
 
     /// Updates the state of the specified view with new information from
-    /// TOCUIKit.
+    /// Allegory.
     ///
-    /// When the state of your app changes, TOCUIKit updates the portions of
-    /// your interface affected by those changes. TOCUIKit calls this method for
+    /// When the state of your app changes, Allegory updates the portions of
+    /// your interface affected by those changes. Allegory calls this method for
     /// any changes affecting the corresponding UIKit view. Use this method to
     /// update the configuration of your view to match the new state information
     /// provided in the `context` parameter.

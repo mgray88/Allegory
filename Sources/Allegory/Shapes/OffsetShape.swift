@@ -3,7 +3,7 @@
 //
 
 /// A shape with a translation offset transform applied to it.
-public struct OffsetShape<Content>: Shape where Content : Shape {
+public struct OffsetShape<Content>: Shape where Content: Shape {
 
     public var shape: Content
 
