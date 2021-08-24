@@ -46,11 +46,23 @@ extension _ShapeView: UIKitNodeResolvable {
 
     private class Node: UIView, UIKitNode {
         override class var layerClass: AnyClass {
-            CAShapeLayer.self
+            ContainerLayer.self
         }
 
-        override var layer: CAShapeLayer {
-            super.layer as! CAShapeLayer
+        override var layer: ContainerLayer {
+            super.layer as! ContainerLayer
+        }
+
+        private let shapeLayer = CAShapeLayer()
+
+        init() {
+            super.init(frame: .zero)
+            layer.addSublayer(shapeLayer)
+        }
+
+        @available(*, unavailable)
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
         }
 
         var hierarchyIdentifier: String {
@@ -75,8 +87,8 @@ extension _ShapeView: UIKitNodeResolvable {
             frame = bounds.rect
             let bounds = bounds.at(origin: .zero)
             let path = makePath(bounds.rect)
-            layer.path = path.cgPath
-            render(layer, bounds.rect)
+            shapeLayer.path = path.cgPath
+            render(shapeLayer, bounds.rect)
             container.view.addSubview(self)
         }
     }

@@ -19,5 +19,6 @@ Pod::Spec.new do |spec|
 
   spec.dependency "AllegoryIdentifiable"
   spec.dependency "RxSwift", "~> 6.0"
+  spec.dependency "Runtime"
 
 end

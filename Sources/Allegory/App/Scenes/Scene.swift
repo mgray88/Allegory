@@ -78,18 +78,19 @@ protocol TitledScene {
     var title: Text? { get }
 }
 
+extension Scene {
+    public var body: SomeScene {
+        (body as Body) as SomeScene
+    }
+}
+
 extension Scene where Body == Never {
     public var body: Self.Body {
         neverScene("\(Self.self)")
     }
 }
 
-extension SomeScene where Self: Scene {
-    public var body: SomeScene {
-        neverScene("\(Self.self)")
-    }
-}
-
+extension Never: SomeScene {}
 extension Never: Scene {}
 
 /// Calls `fatalError` with an explanation that a given `type` is a primitive `Scene`
@@ -98,12 +99,10 @@ public func neverScene(_ type: String) -> Never {
 }
 
 extension Scene {
-    @inlinable
     internal func environment<V>(
         _ keyPath: WritableKeyPath<EnvironmentValues, V>,
         _ value: V
     ) -> ModifiedContent<Self, _EnvironmentKeyWritingModifier<V>> {
         modifier(_EnvironmentKeyWritingModifier(keyPath: keyPath, value: value))
     }
-
 }

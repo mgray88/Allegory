@@ -2,11 +2,6 @@
 // Created by Mike on 8/9/21.
 //
 
-extension ViewModifiers {
-    public struct _TabItem: ViewModifier {
-    }
-}
-
 extension View {
 
     /// Sets the tab bar item associated with this view.
@@ -45,7 +40,44 @@ extension View {
     /// - Parameter label: The tab bar item to associate with this view.
     public func tabItem<V>(
         @ViewBuilder _ label: () -> V
-    ) -> ModifiedContent<Self, ViewModifiers._TabItem> where V: View {
-        TODO()
+    ) -> ModifiedContent<Self, _TabItem<V>> where V: View {
+        modifier(_TabItem(label()))
+    }
+}
+
+public struct _TabItem<V>: ViewModifier where V: View {
+    init(_ label: V) {
+    }
+}
+
+extension _TabItem: UIKitNodeModifierResolvable {
+    private class Node: UIKitNodeModifier {
+        var hierarchyIdentifier: String {
+            "_TabItem"
+        }
+
+        func update(viewModifier: _TabItem<V>, context: inout Context) {
+
+        }
+
+        func render(
+            in container: Container,
+            bounds: Bounds,
+            pass: LayoutPass,
+            node: SomeUIKitNode
+        ) {
+//            container.viewController?.tabBarItem = .init(
+//                title: <#T##String?#>,
+//                image: <#T##UIImage?#>,
+//                tag: <#T##Int#>
+//            )
+        }
+    }
+
+    func resolve(
+        context: Context,
+        cachedNodeModifier: AnyUIKitNodeModifier?
+    ) -> AnyUIKitNodeModifier {
+        (cachedNodeModifier as? Node) ?? Node()
     }
 }

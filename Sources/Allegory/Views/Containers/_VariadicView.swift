@@ -40,6 +40,25 @@ final class _LayoutState<A> {
     }
 }
 
+struct LayoutInfo {
+    var min: CGFloat
+    var max: CGFloat
+    var idx: Int
+    var priority: Double
+}
+
+extension LayoutInfo: Comparable {
+    static func <(_ l: LayoutInfo, _ r: LayoutInfo) -> Bool {
+        if l.priority > r.priority { return true }
+        if r.priority > l.priority { return false }
+        return l.flexibility < r.flexibility
+    }
+
+    var flexibility: CGFloat {
+        max - min
+    }
+}
+
 public protocol _VariadicView_Root {}
 
 public protocol _VariadicView_ViewRoot: _VariadicView_Root {

@@ -6,7 +6,9 @@ import RxSwift
 
 public struct RefreshAction {
     fileprivate let action: () -> Void
-    public func callAsFunction() {}
+    public func callAsFunction() {
+        action()
+    }
 }
 
 private struct RefreshActionKey: EnvironmentKey {

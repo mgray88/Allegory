@@ -2,7 +2,6 @@
 // Created by Mike on 8/15/21.
 //
 
-
 /// A scene that presents a group of identically structured windows.
 ///
 /// Use a `WindowGroup` as a container for a view hierarchy presented by your

@@ -37,3 +37,9 @@ extension UnitPoint: Animatable {
         }
     }
 }
+
+extension UnitPoint {
+    public var cgPoint: CGPoint {
+        .init(x: x, y: y)
+    }
+}

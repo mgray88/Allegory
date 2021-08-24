@@ -14,6 +14,15 @@ public struct _OverlayModifier<Overlay: View>: ViewModifier {
 }
 
 extension View {
+    @available(iOS, introduced: 10.0, deprecated: 100000.0, message: "Use `overlay(alignment:content:)` instead.")
+    @inlinable
+    @_disfavoredOverload
+    public func overlay<Overlay>(
+        _ overlay: Overlay,
+        alignment: Alignment = .center
+    ) -> ModifiedContent<Self, _OverlayModifier<Overlay>> where Overlay: View {
+        modifier(_OverlayModifier(alignment, overlay))
+    }
     /// Layers specified views in front of this view.
     ///
     /// When you provide multiple views, TOCUIKit stacks them.

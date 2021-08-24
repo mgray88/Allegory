@@ -2,25 +2,6 @@
 // Created by Mike on 8/14/21.
 //
 
-public struct _ClipEffect<ClipShape>: ViewModifier where ClipShape: Shape {
-    public var shape: ClipShape
-    public var style: FillStyle
-
-    public init(shape: ClipShape, style: FillStyle = FillStyle()) {
-        self.shape = shape
-        self.style = style
-    }
-
-    public func body(content: Content) -> SomeView {
-        content
-    }
-
-    public var animatableData: ClipShape.AnimatableData {
-        get { shape.animatableData }
-        set { shape.animatableData = newValue }
-    }
-}
-
 extension View {
 
     /// Sets a clipping shape for this view.
@@ -113,5 +94,24 @@ extension View {
             RoundedRectangle(cornerRadius: radius),
             style: FillStyle(antialiased: antialiased)
         )
+    }
+}
+
+public struct _ClipEffect<ClipShape>: ViewModifier where ClipShape: Shape {
+    public var shape: ClipShape
+    public var style: FillStyle
+
+    public init(shape: ClipShape, style: FillStyle = FillStyle()) {
+        self.shape = shape
+        self.style = style
+    }
+
+    public func body(content: Content) -> SomeView {
+        content
+    }
+
+    public var animatableData: ClipShape.AnimatableData {
+        get { shape.animatableData }
+        set { shape.animatableData = newValue }
     }
 }

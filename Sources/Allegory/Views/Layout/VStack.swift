@@ -57,8 +57,9 @@ extension _VariadicView.Tree where Root == _VStackLayout, Content: View {
         for nodes: [SomeUIKitNode]
     ) -> CGSize {
         layout(fitting: proposed, for: nodes)
+        let interItemSpacing = CGFloat(nodes.count - 1) * (root.spacing ?? 0)
         let width: CGFloat = sizes.reduce(0) { max($0, $1.width) }
-        let height: CGFloat = sizes.reduce(0) { $0 + $1.height }
+        let height: CGFloat = sizes.reduce(0) { $0 + $1.height } + interItemSpacing
         return CGSize(width: width, height: height)
     }
 
@@ -86,7 +87,7 @@ extension _VariadicView.Tree where Root == _VStackLayout, Content: View {
         fitting proposed: ProposedSize,
         for nodes: [SomeUIKitNode]
     ) {
-        let flexibilities: [CGFloat] = nodes.map { child in
+        let flexibilities: [LayoutInfo] = nodes.enumerated().map { index, child in
             let lower = child.size(
                 fitting: ProposedSize(width: proposed.width, height: 0),
                 pass: LayoutPass()
@@ -95,37 +96,89 @@ extension _VariadicView.Tree where Root == _VStackLayout, Content: View {
                 fitting: ProposedSize(width: proposed.width, height: .greatestFiniteMagnitude),
                 pass: LayoutPass()
             ).height
-            return upper - lower
-        }
-        var remaining = nodes.indices.sorted { l, r in
-            flexibilities[l] < flexibilities[r]
-        }
+            return LayoutInfo(
+                min: lower,
+                max: upper,
+                idx: index,
+                priority: child.layoutPriority
+            )
+        }.sorted()
+        let groups = flexibilities.group(by: \.priority)
+        var sizes: [CGSize] = Array(repeating: .zero, count: nodes.count)
         var remainingHeight = proposed.height ?? 0
+
+        let allMinHeights = flexibilities.map(\.min).reduce(0, +)
+        remainingHeight -= allMinHeights
 
         // subtract inter item spacing
         remainingHeight -= CGFloat(nodes.count - 1) * (root.spacing ?? 0) // TODO: defaultSpacing
-        var sizes: [CGSize] = Array(repeating: .zero, count: nodes.count)
-        while !remaining.isEmpty {
-            // We don't ever want to propose a negative height
-            if remainingHeight < 0 { remainingHeight = 0 }
 
-            let idx = remaining.removeFirst()
-            let child = nodes[idx]
+        for group in groups {
+            remainingHeight += group.map(\.min).reduce(0, +)
 
-            let height: CGFloat
-            if child.isSpacer {
-                // Propose zero height and let spacer return minLength if set
-                height = 0
-            } else {
-                height = remainingHeight / CGFloat(remaining.count + 1)
+            var remainingIndices = group.map(\.idx)
+            while !remainingIndices.isEmpty {
+                // We don't ever want to propose a negative height
+                if remainingHeight < 0 { remainingHeight = 0 }
+
+                let idx = remainingIndices.removeFirst()
+                let child = nodes[idx]
+
+                let height: CGFloat
+                if child.isSpacer {
+                    // Propose zero height and let spacer return minLength if set
+                    height = 0
+                } else {
+                    height = remainingHeight / CGFloat(remainingIndices.count + 1)
+                }
+
+                let size = child.size(
+                    fitting: ProposedSize(width: proposed.width, height: height),
+                    pass: LayoutPass()
+                )
+                sizes[idx] = size
+                remainingHeight -= size.height
             }
+        }
 
-            let size = child.size(
-                fitting: ProposedSize(width: proposed.width, height: height),
-                pass: LayoutPass()
-            )
-            sizes[idx] = size
-            remainingHeight -= size.height
+        guard remainingHeight > 0
+            else {
+            self.sizes = sizes
+            return
+        }
+
+        for group in groups {
+            while remainingHeight > 0 {
+                var expandableInfos = group.filter {
+                    sizes[$0.idx].height < $0.max && !nodes[$0.idx].isSpacer
+                }
+                guard expandableInfos.count > 0 else { break }
+                var expansions = 0
+                while !expandableInfos.isEmpty {
+                    if remainingHeight < 0 { remainingHeight = 0 }
+                    let layoutInfo = expandableInfos.removeFirst()
+                    let child = nodes[layoutInfo.idx]
+
+                    let expansion = remainingHeight / CGFloat(expandableInfos.count + 1)
+
+                    let size = child.size(
+                        fitting: ProposedSize(
+                            width: proposed.width,
+                            height: sizes[layoutInfo.idx].height + expansion
+                        ),
+                        pass: LayoutPass()
+                    )
+                    let expandedHeight = size.height - sizes[layoutInfo.idx].height
+                    sizes[layoutInfo.idx] = size
+                    remainingHeight -= expandedHeight
+                    if expandedHeight > 0 {
+                        expansions += 1
+                    }
+                }
+                if expansions == 0 {
+                    break
+                }
+            }
         }
 
         if remainingHeight > 0 {

@@ -4,13 +4,13 @@
 
 import RxSwift
 
-/// Provides the ability to set the title of the Scene.
-public protocol _TitledApp {
-    static func _setTitle(_ title: String)
+public protocol SomeApp {
+    @SceneBuilder
+    var body: SomeScene { get }
 }
 
 /// The renderer is responsible for implementing certain functionality.
-public protocol App: _TitledApp {
+public protocol App: SomeApp {
     associatedtype Body: Scene
 
     @SceneBuilder
@@ -20,10 +20,10 @@ public protocol App: _TitledApp {
     static func _launch(_ app: Self, _ rootEnvironment: EnvironmentValues)
 
     /// Implemented by the renderer to update the `App` on `ScenePhase` changes
-    var _phasePublisher: Infallible<ScenePhase> { get }
+//    var _phasePublisher: Infallible<ScenePhase> { get }
 
     /// Implemented by the renderer to update the `App` on `ColorScheme` changes
-    var _colorSchemePublisher: Infallible<ColorScheme> { get }
+//    var _colorSchemePublisher: Infallible<ColorScheme> { get }
 
     static func main()
 
@@ -34,5 +34,11 @@ extension App {
     public static func main() {
         let app = Self()
         _launch(app, EnvironmentValues())
+    }
+}
+
+extension App where Body == Never {
+    public var body: Self.Body {
+        fatalError()
     }
 }
