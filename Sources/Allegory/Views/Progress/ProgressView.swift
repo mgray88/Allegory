@@ -100,12 +100,14 @@ public struct _CustomProgressView<Label, CurrentValueLabel>: View
         self.currentValueLabel = currentValueLabel
     }
 
-    public var body: SomeView {
-        style.makeBody(
-            configuration: .init(
-                fractionCompleted: fractionCompleted,
-                label: label.map { .init(body: AnyView($0)) },
-                currentValueLabel: currentValueLabel.map { .init(body: AnyView($0)) }
+    public var body: AnyView {
+        AnyView(
+            some: style.makeBody(
+                configuration: .init(
+                    fractionCompleted: fractionCompleted,
+                    label: label.map { .init(body: AnyView($0)) },
+                    currentValueLabel: currentValueLabel.map { .init(body: AnyView($0)) }
+                )
             )
         )
     }
@@ -150,6 +152,10 @@ public struct _FractionalProgressView: View, _PrimitiveView {
     func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
         TODO()
     }
+
+    func buildNodeTree(_ node: Node) {
+        TODO()
+    }
 }
 
 /// Override in renderers to provide a default body for indeterminate progress views.
@@ -159,6 +165,10 @@ public struct _IndeterminateProgressView: View, _PrimitiveView {
     }
 
     func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
+        TODO()
+    }
+
+    func buildNodeTree(_ node: Node) {
         TODO()
     }
 }

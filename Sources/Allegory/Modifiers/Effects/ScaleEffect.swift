@@ -2,6 +2,8 @@
 // Created by Mike on 8/14/21.
 //
 
+import UIKit
+
 extension View {
 
     /// Scales this view's rendered output by the given vertical and horizontal

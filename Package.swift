@@ -1,4 +1,4 @@
-// swift-tools-version:5.4
+// swift-tools-version:5.5
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -25,6 +25,9 @@ let package = Package(
             url: "https://github.com/ReactiveX/RxSwift.git",
             from: "6.2.0"
         ),
+        .package(
+            url: "https://github.com/wickwirew/Runtime.git",
+            from: "2.2.2")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -37,7 +40,8 @@ let package = Package(
             name: "Allegory",
             dependencies: [
                 "Identifiable",
-                "RxSwift"
+                "RxSwift",
+                "Runtime",
             ]
         ),
         .testTarget(

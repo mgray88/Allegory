@@ -58,9 +58,6 @@ public struct Environment<Value>: DynamicProperty {
     @usableFromInline
     internal var content: Content
 
-    @usableFromInline
-    internal let keyPath: KeyPath<EnvironmentValues, Value>
-
     /// Creates an environment property to read the specified key path.
     ///
     /// Don’t call this initializer directly. Instead, declare a property
@@ -83,11 +80,11 @@ public struct Environment<Value>: DynamicProperty {
     @inlinable
     public init(_ keyPath: KeyPath<EnvironmentValues, Value>) {
         content = .keyPath(keyPath)
-        self.keyPath = keyPath
     }
 
     // TODO: setContent
     mutating func setContent(from values: EnvironmentValues) {
+        guard case let .keyPath(keyPath) = content else { return }
         content = .value(values[keyPath: keyPath])
     }
 

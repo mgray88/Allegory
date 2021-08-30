@@ -4,7 +4,7 @@
 
 import UIKit
 
-public protocol AnyUIViewRepresentable: SomeView {
+public protocol SomeUIViewRepresentable: SomeView {
     func __makeCoordinator() -> Any
     func __makeUIView(context: Any) -> UIView
     func __updateUIView(_ uiView: UIView, context: Any)
@@ -13,7 +13,7 @@ public protocol AnyUIViewRepresentable: SomeView {
 
 /// A wrapper for a UIKit view that you use to integrate that view into your
 /// Allegory view hierarchy.
-public protocol UIViewRepresentable: AnyUIViewRepresentable, View where Body == Never {
+public protocol UIViewRepresentable: SomeUIViewRepresentable, View where Body == Never {
     /// The type of view to present.
     associatedtype UIViewType: UIView
 
@@ -90,6 +90,8 @@ extension UIViewRepresentable {
     }
 }
 
+extension UIViewRepresentable {}
+
 class UIViewRepresentableNode: SomeUIKitNode {
     var hierarchyIdentifier: String {
         "\(type(of: uiView))"
@@ -99,7 +101,7 @@ class UIViewRepresentableNode: SomeUIKitNode {
     var coordinator: Any!
 
     func update(view: SomeView, context: Context) {
-        let view = view as! AnyUIViewRepresentable
+        let view = view as! SomeUIViewRepresentable
         if let uiView = self.uiView {
             let context = view.__makeContext(context: context, coordinator: coordinator as Any)
             view.__updateUIView(uiView, context: context)

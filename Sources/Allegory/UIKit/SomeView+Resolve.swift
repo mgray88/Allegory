@@ -31,8 +31,8 @@ extension SomeView {
         let resolvedNode: SomeUIKitNode
         if let view = self as? UIKitNodeResolvable {
             resolvedNode = view.resolve(context: context, cachedNode: cachedNode)
-        } else if let view = self as? AnyUIViewRepresentable {
-            let node = (cachedNode as? UIViewRepresentableNode) ?? UIViewRepresentableNode()
+        } else if let view = self as? SomeUIViewRepresentable {
+            let node = view.resolve(context: context, cachedNode: cachedNode)
             node.update(view: view, context: context)
             return node
         } else {

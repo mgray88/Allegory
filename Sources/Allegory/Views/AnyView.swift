@@ -21,6 +21,14 @@ public struct AnyView: View {
         }
     }
 
+    public init(some view: SomeView) {
+        if let anyView = view as? AnyView {
+            self = anyView
+        } else {
+            storage = SomeViewStorage(view: view)
+        }
+    }
+
     public init<V>(erasing view: V) where V: View {
         self.init(view)
     }
@@ -48,6 +56,26 @@ fileprivate class AnyViewStorage<V: View>: AnyViewStorageBase {
     let view: V
 
     init(view: V) {
+        self.view = view
+        super.init()
+    }
+
+    override func size() -> CGSize {
+        TODO()
+    }
+
+    override func resolve(
+        context: Context,
+        cachedNode: SomeUIKitNode?
+    ) -> SomeUIKitNode {
+        view.resolve(context: context, cachedNode: cachedNode)
+    }
+}
+
+fileprivate class SomeViewStorage: AnyViewStorageBase {
+    let view: SomeView
+
+    init(view: SomeView) {
         self.view = view
         super.init()
     }

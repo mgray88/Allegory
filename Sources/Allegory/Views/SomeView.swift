@@ -4,5 +4,6 @@
 
 /// Protocol representing "some" ``View`` in lieu of `some View`
 public protocol SomeView {
+    @ViewBuilder
     var body: SomeView { get }
 }

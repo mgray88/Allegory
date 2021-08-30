@@ -100,11 +100,11 @@ public struct _AnyProgressViewStyle: ProgressViewStyle {
         }
     }
 
-//    public func makeBody(
-//        configuration: Configuration
-//    ) -> SomeView {
-//        bodyClosure(configuration)
-//    }
+    public func makeBody(
+        configuration: Configuration
+    ) -> SomeView {
+        AnyView(some: bodyClosure(configuration))
+    }
 }
 
 extension EnvironmentValues {

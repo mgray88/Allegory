@@ -72,6 +72,5 @@ public struct IsAuxiliaryContentTraitKey: _ViewTraitKey {
         get { false }
     }
 
-    @usableFromInline
     public typealias Value = Bool
 }

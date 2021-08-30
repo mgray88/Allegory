@@ -7,20 +7,20 @@ protocol StateProperty: DynamicProperty {
 }
 
 @propertyWrapper
-public struct State<Value>: DynamicProperty {
+public struct State<Value>: StateProperty {
 
-//    public let storage: StateStorage
+    public let storage: StateStorage
 
-    @usableFromInline
-    internal var _value: Value
+//    @usableFromInline
+//    internal var _value: Value
 
-    @usableFromInline
-    internal var _location: AnyLocation<Value>?
+//    @usableFromInline
+//    internal var _location: AnyLocation<Value>?
 
     @inlinable
     public init(wrappedValue value: Value) {
-        _value = value
-//        self.storage = StateStorage(initialValue: value, get: { value }, set: { _ in })
+//        _value = value
+        self.storage = StateStorage(initialValue: value, get: { value }, set: { _ in })
     }
 
     @inlinable

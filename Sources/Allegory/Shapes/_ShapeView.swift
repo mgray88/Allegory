@@ -2,6 +2,8 @@
 // Created by Mike on 7/29/21.
 //
 
+import UIKit
+
 public struct _ShapeView<S, SS>: View
     where S: Shape, SS: ShapeStyle {
 

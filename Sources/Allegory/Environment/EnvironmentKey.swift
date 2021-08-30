@@ -114,3 +114,9 @@ extension View {
         modifier(_EnvironmentKeyWritingModifier(keyPath: keyPath, value: value))
     }
 }
+
+extension ModifiedContent where Modifier: EnvironmentModifier {
+    func modifyEnvironment(_ values: inout EnvironmentValues) {
+        modifier.modifyEnvironment(&values)
+    }
+}

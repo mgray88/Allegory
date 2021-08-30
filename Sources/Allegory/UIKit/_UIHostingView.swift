@@ -5,13 +5,14 @@
 import Foundation
 import UIKit
 
-open class HostingView: ContainerView {
+@_spi(Internal)
+open class _UIHostingView: ContainerView {
 
     private class Renderer: Allegory.Renderer {
 
-        weak var hostingView: HostingView?
+        weak var hostingView: _UIHostingView?
 
-        init(hostingView: HostingView? = nil) {
+        init(hostingView: _UIHostingView? = nil) {
             self.hostingView = hostingView
         }
 

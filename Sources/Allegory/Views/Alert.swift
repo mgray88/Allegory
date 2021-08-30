@@ -2,12 +2,6 @@
 // Created by Mike on 8/5/21.
 //
 
-extension ViewModifiers {
-    public struct _Alert<Actions, Message>: ViewModifier {
-        public let isPresented: Binding<Bool>
-    }
-}
-
 extension View {
     /// Presents an alert with a message using the given data to produce the
     /// alert's content and a string variable as a title.
@@ -82,27 +76,32 @@ extension View {
     ///     currently available data.
     ///   - message: A ``ViewBuilder`` returning the message for the alert given
     ///     the currently available data.
+    @_spi(Incomplete)
     public func alert<S, A, M, T>(
         _ title: S,
         isPresented: Binding<Bool>,
         presenting data: T?,
         actions: (T) -> A,
         message: (T) -> M
-    ) -> ModifiedContent<Self, ViewModifiers._Alert<A, M>>
+    ) -> ModifiedContent<Self, AlertModifier<A, M>>
         where S: StringProtocol, A: View, M: View {
         modifier(.init(isPresented: Binding(projectedValue: isPresented)))
     }
 }
 //SwiftUI.AlertModifier<SwiftUI.ModifiedContent<SwiftUI.TupleView<(SwiftUI.Button<SwiftUI.Text>, SwiftUI.Button<SwiftUI.Text>)>, SwiftUI.ButtonStyleModifier<SwiftUI.PlatformItemListButtonStyle>>, SwiftUI.Text>
 
-extension ViewModifiers._Alert: UIKitNodeModifierResolvable {
+public struct AlertModifier<Actions, Message>: ViewModifier {
+    public let isPresented: Binding<Bool>
+}
+
+extension AlertModifier: UIKitNodeModifierResolvable {
     private class Node: UIKitNodeModifier {
         var hierarchyIdentifier: String {
             "Alert"
         }
 
         func update(
-            viewModifier: ViewModifiers._Alert<Actions, Message>,
+            viewModifier: AlertModifier<Actions, Message>,
             context: inout Context
         ) {
         }

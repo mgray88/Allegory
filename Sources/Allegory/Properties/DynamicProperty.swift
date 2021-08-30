@@ -10,7 +10,7 @@
 public protocol DynamicProperty {
     /// Updates the underlying value of the stored value.
     ///
-    /// TOCUIKit calls this function before rendering a view's ``View/body`` to
+    /// Allegory calls this function before rendering a view's ``View/body`` to
     /// ensure the view has the most recent value.
     mutating func update()
 }

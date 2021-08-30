@@ -25,8 +25,9 @@ public protocol View: SomeView {
 }
 
 extension View {
+    @ViewBuilder
     public var body: SomeView {
-        (body as Body) as SomeView
+        (body as Body)
     }
 }
 
@@ -42,9 +43,10 @@ extension View {
 
 /// A `View` that offers primitive functionality, which renders its `body`
 /// inaccessible.
-protocol _PrimitiveView {
+protocol _PrimitiveView: SomeView {
     func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize
     func render(in container: Container, bounds: Bounds, pass: LayoutPass)
+    func buildNodeTree(_ node: Node)
 }
 
 class ViewNode: UIKitNode {

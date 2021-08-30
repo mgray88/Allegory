@@ -97,8 +97,22 @@ extension Button where Label == Text {
     }
 }
 
+extension Button: _PrimitiveView {
+    func buildNodeTree(_ node: Node) {
+        // TODO
+    }
+
+    func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        TODO()
+    }
+
+    func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
+        TODO()
+    }
+}
+
 extension Button: UIKitNodeResolvable {
-    private class Node: Control, UIKitNode {
+    private class ButtonNode: Control, UIKitNode {
         var hierarchyIdentifier: String {
             "Button<\(label.hierarchyIdentifier)>"
         }
@@ -134,7 +148,7 @@ extension Button: UIKitNodeResolvable {
     }
 
     func resolve(context: Context, cachedNode: SomeUIKitNode?) -> SomeUIKitNode {
-        (cachedNode as? Node) ?? Node()
+        (cachedNode as? ButtonNode) ?? ButtonNode()
     }
 }
 

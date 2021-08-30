@@ -17,6 +17,27 @@ public struct TupleView<T>: View {
     }
 }
 
+extension TupleView: _PrimitiveView {
+    func buildNodeTree(_ node: Node) {
+        let children = contentViews
+        for idx in children.indices {
+            if node.children.count <= idx {
+                node.children.append(Node())
+            }
+            var child = children[idx]
+            child.buildNodeTree(node.children[idx])
+        }
+    }
+
+    func size(fitting proposedSize: ProposedSize, pass: LayoutPass) -> CGSize {
+        TODO()
+    }
+
+    func render(in container: Container, bounds: Bounds, pass: LayoutPass) {
+        TODO()
+    }
+}
+
 extension TupleView: TransientContainerView {
     var contentViews: [SomeView] {
         Mirror(reflecting: value).children.flatMap { ($0.value as! SomeView).contentViews }

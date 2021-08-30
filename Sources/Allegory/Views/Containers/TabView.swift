@@ -39,8 +39,6 @@ import UIKit
 public struct TabView<SelectionValue, Content>: View
     where SelectionValue: Hashable, Content: View {
 
-    internal let content: Content
-
     @usableFromInline
     internal let _tree: _VariadicView.Tree<UIKitTabView, Content>
 
@@ -60,7 +58,10 @@ public struct TabView<SelectionValue, Content>: View
 extension TabView where SelectionValue == Int {
 
     public init(@ViewBuilder content: () -> Content) {
-        self.content = content()
+        _tree = .init(
+            root: .init(),
+            content: content()
+        )
     }
 }
 
@@ -102,9 +103,9 @@ public class UIKitTabView: UITabBarController, UITabBarControllerDelegate {
     init() {
         super.init(nibName: nil, bundle: nil)
         self.delegate = self
-        let orders = HostingController(rootView: Text("Orders"))
+        let orders = UIHostingController(rootView: Text("Orders"))
         orders.tabBarItem = .init(title: "Orders", image: nil, tag: 0)
-        let zStack = HostingController(rootView: Text("ZStack"))
+        let zStack = UIHostingController(rootView: Text("ZStack"))
         zStack.tabBarItem = .init(title: "ZStack", image: nil, tag: 1)
         viewControllers = [
             orders,
@@ -123,4 +124,4 @@ public class UIKitTabView: UITabBarController, UITabBarControllerDelegate {
     }
 }
 
-extension UIKitTabView: _VariadicView_UnaryViewRoot
+extension UIKitTabView: _VariadicView_UnaryViewRoot {}

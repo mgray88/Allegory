@@ -44,6 +44,45 @@ final class AllegoryTests: XCTestCase {
         XCTAssertEqual(button.label, Text("1"))
     }
 
+    func testUnchangedNested() {
+        struct Nested: View {
+            var isLarge: Bool = false
+            var body: SomeView {
+                nestedBodyCount += 1
+                return Button("Nested Button", action: {})
+            }
+        }
+
+        struct ContentView: View {
+            @RxObservedObject var model = Model()
+
+            @ViewBuilder
+            public var body: SomeView {
+                Button("\(model.counter)") {
+                    model.counter += 1
+                }
+                Nested(isLarge: model.counter > 10)
+                    .debug {
+                        contentViewBodyCount += 1
+                    }
+            }
+        }
+
+        var v = ContentView()
+        let node = Node()
+        v.buildNodeTree(node)
+        XCTAssertEqual(contentViewBodyCount, 1)
+        XCTAssertEqual(nestedBodyCount, 1)
+        var button: Button<Text> {
+            node.children[0].children[0].view as! Button<Text>
+        }
+        button.action()
+        node.needsRebuild = true
+        node.rebuildIfNeeded()
+        XCTAssertEqual(contentViewBodyCount, 2)
+        XCTAssertEqual(nestedBodyCount, 1)
+    }
+
     func testExample() throws {
         struct Nested: View {
             @RxObservedObject var model = nestedModel

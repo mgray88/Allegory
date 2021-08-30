@@ -6,13 +6,13 @@ import RxSwift
 
 /// A type of object with a publisher that emits before the object has changed.
 ///
-/// By default an ``ObservableObject`` will synthesize an ``objectWillChange``
-/// publisher that emits before any of its `@Published` properties changes:
+/// By default an ``RxObservableObject`` will synthesize an ``objectWillChange``
+/// publisher that emits before any of its `@RxPublished` properties changes:
 ///
 /// ```swift
-/// class Contact: ObservableObject {
-///     @Published var name: String
-///     @Published var age: Int
+/// class Contact: RxObservableObject {
+///     @RxPublished var name: String
+///     @RxPublished var age: Int
 ///
 ///     init(name: String, age: Int) {
 ///         self.name = name
