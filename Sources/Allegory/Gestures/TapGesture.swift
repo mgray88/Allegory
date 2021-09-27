@@ -53,7 +53,7 @@ extension View {
     public func onTapGesture(
         count: Int = 1,
         perform action: @escaping () -> Void
-    ) -> ModifiedContent<Self, ViewModifiers._Gesture<_EndedGesture<TapGesture>>> {
+    ) -> ModifiedContent<Self, _AddGestureModifier<_EndedGesture<TapGesture>>> {
         gesture(TapGesture(count: count).onEnded(action))
     }
 }

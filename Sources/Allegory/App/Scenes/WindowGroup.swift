@@ -31,6 +31,7 @@
 ///
 /// You typically use a window group for the main interface of an app that isn't
 /// document-based. For document-based apps, use a ``DocumentGroup`` instead.
+@available(iOS 13.0, *)
 public struct WindowGroup<Content>: Scene, TitledScene where Content: View {
     public let id: String
     public let title: Text?

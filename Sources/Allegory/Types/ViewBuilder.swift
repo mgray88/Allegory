@@ -15,7 +15,7 @@ public struct ViewBuilder {
     @inlinable
     public static func buildBlock<Content>(
         _ content: Content
-    ) -> Content where Content: View {
+    ) -> Content where Content: SomeView {
         content
     }
 }

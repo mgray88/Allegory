@@ -78,6 +78,7 @@ open class UIHostingController<Content>: UIViewController where Content: View {
     @_spi(Internal)
     @objc override dynamic open func loadView() {
         view = _UIHostingView(rootView: rootView)
+        view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.backgroundColor = .white
     }
 
@@ -146,8 +147,8 @@ open class UIHostingController<Content>: UIViewController where Content: View {
 
     @objc override dynamic open func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        let size = hostView.layoutSize(fitting: view.bounds.size)
-        hostView.frame.size = size
-        hostView.center = CGPoint(x: view.bounds.midX, y: view.bounds.midY)
+//        let size = hostView.layoutSize(fitting: view.bounds.size)
+//        hostView.frame.size = size
+//        hostView.center = CGPoint(x: view.bounds.midX, y: view.bounds.midY)
     }
 }

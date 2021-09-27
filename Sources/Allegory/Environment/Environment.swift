@@ -82,7 +82,6 @@ public struct Environment<Value>: DynamicProperty {
         content = .keyPath(keyPath)
     }
 
-    // TODO: setContent
     mutating func setContent(from values: EnvironmentValues) {
         guard case let .keyPath(keyPath) = content else { return }
         content = .value(values[keyPath: keyPath])

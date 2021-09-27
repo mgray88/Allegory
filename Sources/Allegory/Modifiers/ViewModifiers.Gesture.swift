@@ -2,25 +2,6 @@
 // Created by Mike on 8/3/21.
 //
 
-extension ViewModifiers {
-    public struct _Gesture<G: SomeGesture>: ViewModifier {
-        public enum Priority {
-            case low
-            case high
-            case simultaneous
-        }
-
-        public let gesture: G
-        public let priority: Priority
-
-        @inlinable
-        public init(_ gesture: G, priority: Priority) {
-            self.gesture = gesture
-            self.priority = priority
-        }
-    }
-}
-
 extension View {
     /// Attaches a gesture to the view with a lower precedence than gestures
     /// defined by the view.
@@ -66,8 +47,8 @@ extension View {
     @inlinable
     public func gesture<T>(
         _ gesture: T
-    ) -> ModifiedContent<Self, ViewModifiers._Gesture<T>> where T: SomeGesture {
-        modifier(ViewModifiers._Gesture(gesture, priority: .low))
+    ) -> ModifiedContent<Self, _AddGestureModifier<T>> where T: SomeGesture {
+        modifier(_AddGestureModifier(gesture, priority: .low))
     }
 
     /// Attaches a gesture to the view with a higher precedence than gestures
@@ -113,8 +94,8 @@ extension View {
     @inlinable
     public func highPriorityGesture<T>(
         _ gesture: T
-    ) -> ModifiedContent<Self, ViewModifiers._Gesture<T>> where T: SomeGesture {
-        modifier(ViewModifiers._Gesture(gesture, priority: .high))
+    ) -> ModifiedContent<Self, _AddGestureModifier<T>> where T: SomeGesture {
+        modifier(_AddGestureModifier(gesture, priority: .high))
     }
 
     /// Attaches a gesture to the view to process simultaneously with gestures
@@ -165,12 +146,12 @@ extension View {
     @inlinable
     public func simultaneousGesture<T>(
         _ gesture: T
-    ) -> ModifiedContent<Self, ViewModifiers._Gesture<T>> where T: SomeGesture {
-        modifier(ViewModifiers._Gesture(gesture, priority: .simultaneous))
+    ) -> ModifiedContent<Self, _AddGestureModifier<T>> where T: SomeGesture {
+        modifier(_AddGestureModifier(gesture, priority: .simultaneous))
     }
 }
 
-extension ViewModifiers._Gesture: UIKitNodeModifierResolvable {
+extension _AddGestureModifier: UIKitNodeModifierResolvable {
     private class Node: UIKitNodeModifier {
         var hierarchyIdentifier: String {
             "Gesture"
@@ -179,7 +160,7 @@ extension ViewModifiers._Gesture: UIKitNodeModifierResolvable {
         let gestureView = GestureView()
 
         func update(
-            viewModifier: ViewModifiers._Gesture<G>,
+            viewModifier: _AddGestureModifier<G>,
             context: inout Context
         ) {
             let gesture = viewModifier.gesture as! ResolvableGesture
@@ -210,7 +191,7 @@ extension ViewModifiers._Gesture: UIKitNodeModifierResolvable {
     }
 }
 
-extension ViewModifiers._Gesture {
+extension _AddGestureModifier {
     class GestureView: ContainerView {
         var didEndAction: (() -> Void)?
 

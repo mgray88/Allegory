@@ -40,14 +40,52 @@ extension View {
     /// - Parameter label: The tab bar item to associate with this view.
     public func tabItem<V>(
         @ViewBuilder _ label: () -> V
-    ) -> ModifiedContent<Self, _TabItem<V>> where V: View {
+    ) -> ModifiedContent<Self, _TabItem> where V: View {
         modifier(_TabItem(label()))
     }
 }
 
-public struct _TabItem<V>: ViewModifier where V: View {
-    init(_ label: V) {
+// SwiftUI.TabView<Int, SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<SwiftUI.Text, SwiftUI.PlatformItemTraitWriter<SwiftUI.LabelPlatformItemListFlags, SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<SwiftUI.Text, SwiftUI._EnvironmentKeyTransformModifier<SwiftUI.SymbolVariants>>, SwiftUI.AccessibilityContainerModifier>, SwiftUI.MergePlatformItemsModifier>, SwiftUI.TabItem.TraitKey>>, SwiftUI._TraitWritingModifier<SwiftUI.TagValueTraitKey<String>>>>
+//SwiftUI.ModifiedContent<
+//    SwiftUI.ModifiedContent<
+//        SwiftUI.Text,
+//        SwiftUI.PlatformItemTraitWriter<
+//            SwiftUI.LabelPlatformItemListFlags,
+//            SwiftUI.ModifiedContent<
+//                SwiftUI.ModifiedContent<
+//                    SwiftUI.ModifiedContent<
+//                        SwiftUI.Text,
+//                        SwiftUI._EnvironmentKeyTransformModifier<
+//                            SwiftUI.SymbolVariants
+//                        >
+//                    >,
+//                    SwiftUI.AccessibilityContainerModifier
+//                >,
+//                SwiftUI.MergePlatformItemsModifier
+//            >,
+//            SwiftUI.TabItem.TraitKey
+//        >
+//    >,
+//    SwiftUI._TraitWritingModifier<
+//        SwiftUI.TagValueTraitKey<
+//            Int
+//        >
+//    >
+//>
+
+public struct _TabItem: ViewModifier {
+    init<V: View>(_ label: V) {
     }
+
+    public struct TraitKey: _PlatformItemTraitKey {
+
+    }
+}
+
+public protocol _PlatformItemTraitKey {}
+
+public struct _PlatformItemTraitWriter<Tags, Content, Trait>: ViewModifier {
+
 }
 
 extension _TabItem: UIKitNodeModifierResolvable {
@@ -56,7 +94,7 @@ extension _TabItem: UIKitNodeModifierResolvable {
             "_TabItem"
         }
 
-        func update(viewModifier: _TabItem<V>, context: inout Context) {
+        func update(viewModifier: _TabItem, context: inout Context) {
 
         }
 

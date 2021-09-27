@@ -2,6 +2,7 @@
 // Created by Mike on 7/29/21.
 //
 
+import Runtime
 import RxSwift
 import UIKit
 
@@ -24,7 +25,7 @@ public protocol View: SomeView {
     var body: Body { get }
 }
 
-extension View {
+extension SomeView where Self: View {
     @ViewBuilder
     public var body: SomeView {
         (body as Body)
@@ -58,18 +59,33 @@ class ViewNode: UIKitNode {
     var node: SomeUIKitNode!
 
     var view: SomeView!
+    var previousView: SomeView?
     var context: Context!
 
     var propertyStorage: [String: Any] = [:]
     var disposeBag = DisposeBag()
-    var needsRebuild = false
+    var needsRebuild = true
 
     func update(view: SomeView, context: Context) {
         self.view = view
         self.context = context
-        ViewNode.configureEnvironmentObjectProperties(of: view, context: context)
+
+        let shouldRunBody = needsRebuild || !view.equalToPrevious(previousView)
+        if !shouldRunBody {
+            node?.needsRebuild = true
+            return
+        }
+
+//        ViewNode.configureEnvironmentObjectProperties(of: view, context: context)
+
+        observeObjects()
+        restoreStateProperties()
+
         node = view.body.resolve(context: context, cachedNode: node ?? nil)
-        observeStateProperties(of: view)
+
+        storeStateProperties()
+        previousView = view
+        needsRebuild = false
     }
 
     func update(view: Never, context: Context) {
@@ -91,21 +107,49 @@ class ViewNode: UIKitNode {
         }
     }
 
+    private func observeObjects() {
+
+    }
+
+    private func restoreStateProperties() {
+
+    }
+
+    private func storeStateProperties() {
+
+    }
+
+    private func observeProperties(of view: inout Any) {
+        guard let info = try? typeInfo(of: type(of: view)) else { return }
+        do {
+            let dynamicProps = try info.dynamicProperties(
+                &context.environment,
+                source: &view
+            )
+            for property in dynamicProps {
+                if property.type is StateProperty.Type {
+                    var prop = try property.get(from: view) as! StateProperty
+                }
+            }
+        } catch {
+
+        }
+    }
+
     private func observeStateProperties(of view: SomeView) {
         disposeBag = DisposeBag()
         let mirror = Mirror(reflecting: view)
         for (label, value) in mirror.children where label != nil {
             if let property = value as? StateProperty {
+                propertyStorage[label!] = property.value
                 if propertyStorage[label!] == nil { propertyStorage[label!] = property.storage.initialValue }
                 property.storage.get = { [unowned self] in self.propertyStorage[label!]! }
                 property.storage.set = { [unowned self] in
                     self.propertyStorage[label!] = $0
                     self.contentWillChange()
                 }
-            } else if var property = value as? EnvironmentObjectProperty {
-                let key = property.storage.objectTypeIdentifier
-                property.storage.get = { [unowned self] in self.context.environmentObjects[key]! }
-                property.storage.set = { [unowned self] in self.context.environmentObjects[key] = $0 }
+            } else if var property = value as? EnvironmentReader {
+                property.setContent(from: context.environment)
             } else if let property = value as? ObservedProperty {
                 property.objectWillChange
                     .subscribe(onNext: { [weak self] in

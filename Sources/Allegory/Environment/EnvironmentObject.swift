@@ -92,7 +92,7 @@ extension RxObservableObject {
 
 extension View {
 
-    /// Supplies an `ObservableObject` to a view subhierarchy.
+    /// Supplies an `RxObservableObject` to a view subhierarchy.
     ///
     /// The object can be read by any child by using `EnvironmentObject`.
     ///

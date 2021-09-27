@@ -6,14 +6,29 @@
 //
 
 import Allegory
-import AllegoryIdentifiable
-import SwiftUI
+import UIKit
 
 @main
 struct DemoApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
+//    @UIApplicationDelegateAdaptor var delegate: AppDelegate
+
+    var body: SomeScene {
+        Window {
+            TabView {
+                NavigationView {
+                    ContentView()
+                }
+                .tabItem { Text("First Tab") }
+                .tag(0)
+
+                NavigationView {
+                    ContentView()
+                }
+                .tabItem { Text("Second Tab") }
+                .tag(1)
+            }
         }
     }
 }
+
+//class AppDelegate: UIResponder, UIApplicationDelegate {}

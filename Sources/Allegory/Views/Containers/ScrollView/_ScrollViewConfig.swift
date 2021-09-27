@@ -2,6 +2,8 @@
 // Created by Mike on 8/29/21.
 //
 
+import UIKit
+
 public struct _ScrollViewConfig {
     public static let decelerationRateNormal: Double =
         Double(UIScrollView.DecelerationRate.normal.rawValue)

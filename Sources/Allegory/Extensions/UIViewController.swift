@@ -6,6 +6,7 @@ import UIKit
 
 extension UIViewController {
     func add(_ child: UIViewController) {
+        guard !children.contains(child) else { return }
         addChild(child)
         view.addSubview(child.view)
         child.didMove(toParent: self)

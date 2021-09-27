@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		27BE60892700EBAA00913D46 /* RevealServer.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27BE60882700EBAA00913D46 /* RevealServer.xcframework */; };
+		27BE608A2700EBAA00913D46 /* RevealServer.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 27BE60882700EBAA00913D46 /* RevealServer.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		27D113FF26B8C20600863E95 /* DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D113FE26B8C20600863E95 /* DemoApp.swift */; };
 		27D1140126B8C20600863E95 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D1140026B8C20600863E95 /* ContentView.swift */; };
 		27D1140326B8C20700863E95 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 27D1140226B8C20700863E95 /* Assets.xcassets */; };
@@ -15,14 +17,30 @@
 		27D1141326B8C2F100863E95 /* Identifiable in Frameworks */ = {isa = PBXBuildFile; productRef = 27D1141226B8C2F100863E95 /* Identifiable */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		27BE608B2700EBAA00913D46 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				27BE608A2700EBAA00913D46 /* RevealServer.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		27BE608626FF8F9D00913D46 /* Allegory */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Allegory; path = ..; sourceTree = "<group>"; };
+		27BE608726FF908100913D46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		27BE60882700EBAA00913D46 /* RevealServer.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = RevealServer.xcframework; path = Demo/RevealServer.xcframework; sourceTree = "<group>"; };
 		27D113FB26B8C20600863E95 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		27D113FE26B8C20600863E95 /* DemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoApp.swift; sourceTree = "<group>"; };
 		27D1140026B8C20600863E95 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		27D1140226B8C20700863E95 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		27D1140526B8C20700863E95 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		27D1140C26B8C26C00863E95 /* Allegory */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Allegory; path = ../../..; sourceTree = "<group>"; };
-		27D1140E26B8C2D100863E95 /* Allegory */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Allegory; path = ..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +50,7 @@
 			files = (
 				27D1141326B8C2F100863E95 /* Identifiable in Frameworks */,
 				27D1141126B8C2F100863E95 /* Allegory in Frameworks */,
+				27BE60892700EBAA00913D46 /* RevealServer.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +78,7 @@
 		27D113FD26B8C20600863E95 /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				27BE608726FF908100913D46 /* Info.plist */,
 				27D113FE26B8C20600863E95 /* DemoApp.swift */,
 				27D1140026B8C20600863E95 /* ContentView.swift */,
 				27D1140226B8C20700863E95 /* Assets.xcassets */,
@@ -79,7 +99,7 @@
 		27D1140D26B8C2D100863E95 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				27D1140E26B8C2D100863E95 /* Allegory */,
+				27BE608626FF8F9D00913D46 /* Allegory */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -87,6 +107,7 @@
 		27D1140F26B8C2F100863E95 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				27BE60882700EBAA00913D46 /* RevealServer.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -101,6 +122,8 @@
 				27D113F726B8C20600863E95 /* Sources */,
 				27D113F826B8C20600863E95 /* Frameworks */,
 				27D113F926B8C20600863E95 /* Resources */,
+				27BE608B2700EBAA00913D46 /* Embed Frameworks */,
+				27BE608C2700EBEF00913D46 /* Integrate Reveal Server */,
 			);
 			buildRules = (
 			);
@@ -159,6 +182,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		27BE608C2700EBEF00913D46 /* Integrate Reveal Server */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Integrate Reveal Server";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export REVEAL_SERVER_FILENAME=\"RevealServer.xcframework\"\n\n# Update this path to point to the location of RevealServer.xcframework in your project.\nexport REVEAL_SERVER_PATH=\"${SRCROOT}/${REVEAL_SERVER_FILENAME}\"\n\n# If RevealServer.xcframework exists at the specified path, run the integration script.\nif [ -d \"${REVEAL_SERVER_PATH}\" ]; then\n  \"${REVEAL_SERVER_PATH}/Scripts/integrate_revealserver.sh\"\nelse\n  echo \"Reveal Server not loaded into ${TARGET_NAME}: ${REVEAL_SERVER_FILENAME} could not be found.\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		27D113F726B8C20600863E95 /* Sources */ = {
@@ -300,9 +345,10 @@
 				DEVELOPMENT_TEAM = 6BRY3H7A8B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_FILE = Demo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -330,9 +376,10 @@
 				DEVELOPMENT_TEAM = 6BRY3H7A8B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_FILE = Demo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;

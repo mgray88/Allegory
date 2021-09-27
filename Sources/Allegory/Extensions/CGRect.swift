@@ -47,6 +47,10 @@ extension CGRect {
 
 extension CGRect {
 
+    var center: CGPoint {
+        .init(x: midX, y: midY)
+    }
+
     var flipped: CGRect {
         CGRect(x: origin.y, y: origin.x, width: height, height: width)
     }

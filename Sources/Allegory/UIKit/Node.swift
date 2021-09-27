@@ -18,6 +18,34 @@ class Node {
             view.buildNodeTree(self)
         }
     }
+
+    func buildNodeTree() {
+        if let primitive = view as? _PrimitiveView {
+//            primitive
+            return
+        }
+
+        let shouldRunBody = needsRebuild && !view.equalToPrevious(previousView)
+        if !shouldRunBody {
+            for child in children {
+                child.rebuildIfNeeded()
+            }
+            return
+        }
+
+        view.observeObjects(self)
+        view.restoreStateProperties(self)
+
+        let body = view.body
+        if children.isEmpty {
+            children = [Node()]
+        }
+        body.buildNodeTree(children[0])
+
+        view.storeStateProperties(self)
+        previousView = view
+        needsRebuild = false
+    }
 }
 
 extension SomeView {
@@ -38,19 +66,27 @@ extension SomeView {
             return
         }
 
-        self.observeObjects(node)
+//        self.observeObjects(node)
+        self.restoreStateProperties(node)
 
-        var body = body
+        let body = body
         if node.children.isEmpty {
             node.children = [Node()]
         }
         body.buildNodeTree(node.children[0])
+
+        self.storeStateProperties(node)
         node.previousView = self
         node.needsRebuild = false
     }
 
     func restoreStateProperties(_ node: Node) {
-
+        let m = Mirror(reflecting: self)
+        for (label, value) in m.children {
+            guard let prop = value as? StateProperty else { continue }
+            guard let propValue = node.stateProperties[label!] else { continue }
+            prop.value = propValue
+        }
     }
 
     func storeStateProperties(_ node: Node) {
@@ -67,7 +103,31 @@ extension SomeView {
             return try properties.allSatisfy { property in
                 let selfVal = try property.get(from: self)
                 let prevVal = try property.get(from: previous)
-                return isEqual(selfVal, prevVal)
+                return .equate(selfVal, prevVal)
+//                return isEqual(selfVal, prevVal)
+            }
+        } catch {
+            print(error)
+        }
+        return false
+    }
+
+    func equalToPrevious(_ view: SomeView?) -> Bool {
+        guard let previous = view as? Self else { return false }
+        do {
+            let info = try typeInfo(of: Self.self)
+            let properties = info.properties.filter {
+                $0.type != StateProperty.self
+            }
+            return try properties.allSatisfy { property in
+                let propInfo = try typeInfo(of: property.type)
+                var selfVal = try property.get(from: self)
+                var prevVal = try property.get(from: previous)
+                if memcmp(&selfVal, &prevVal, propInfo.size) == 0 {
+                    return true
+                } else {
+                    return isEqual(selfVal, prevVal)
+                }
             }
         } catch {
             print(error)
@@ -80,11 +140,11 @@ extension SomeView {
     func observeObjects(_ node: Node) {
         guard let info = try? typeInfo(of: Self.self) else { return }
         do {
-            var anyView: Any = self
-            let dynamicProps = try info.dynamicProperties(
-                &node.environmentValues,
-                source: &anyView
-            )
+//            var anyView: Any = self
+//            let dynamicProps = try info.dynamicProperties(
+//                &node.environmentValues,
+//                source: &self
+//            )
 //            self = anyView as! Self
         } catch {
             assertionFailure()
@@ -120,6 +180,18 @@ extension EnvironmentValues {
             try prop.set(value: wrapper, on: &element)
         }
         // swiftlint:enable force_cast
+    }
+}
+
+public extension Equatable {
+    /// Equate two values of unknown type.
+    static func equate(_ any0: Any, _ any1: Any) -> Bool {
+        guard
+            let equatable0 = any0 as? Self,
+            let equatable1 = any1 as? Self
+            else { return false }
+
+        return equatable0 == equatable1
     }
 }
 

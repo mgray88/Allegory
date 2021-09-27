@@ -75,52 +75,60 @@ extension _VariadicView_ViewRoot where Self.Body == Never {
 public protocol _VariadicView_UnaryViewRoot: _VariadicView_ViewRoot {}
 
 public struct _VariadicView_Children: View, SomeView {
+    private let elements: [Element]
     public typealias Body = Never
 }
 
-//extension _VariadicView_Children: RandomAccessCollection {
-//    public struct Element : View, Identifiable {
-//        public var body: Never
-//
-//        public var id: AnyHashable {
-//            get {
-//                fatalError()
-//            }
-//        }
-//        public func id<ID>(as _: ID.Type = ID.self) -> ID? where ID : Hashable {
-//            fatalError()
-//        }
-//        public subscript<Trait>(key: Trait.Type) -> Trait.Value where Trait : _ViewTraitKey {
-//            get {
-//                fatalError()
-//            }
-//            set {
-//                fatalError()
-//            }
-//        }
-//        public typealias ID = AnyHashable
-//        public typealias Body = Never
-//    }
-//    public var startIndex: Int {
-//        get {
-//            fatalError()
-//        }
-//    }
-//    public var endIndex: Int {
-//        get {
-//            fatalError()
-//        }
-//    }
-//    public subscript(index: Int) -> _VariadicView_Children.Element {
-//        get {
-//            fatalError()
-//        }
-//    }
-//    public typealias Index = Int
-//    public typealias Iterator = IndexingIterator<_VariadicView_Children>
-//    public typealias SubSequence = Slice<_VariadicView_Children>
-//    public typealias Indices = Range<Int>
-//}
+extension _VariadicView_Children: RandomAccessCollection {
+    public struct Element: View, Identifiable {
+        public var body: Never
+
+        public var id: AnyHashable {
+            get {
+                fatalError()
+            }
+        }
+
+        public func id<ID>(as _: ID.Type = ID.self) -> ID? where ID: Hashable {
+            id.base as? ID
+        }
+
+        public subscript<Trait>(key: Trait.Type) -> Trait.Value where Trait: _ViewTraitKey {
+            get {
+                fatalError()
+            }
+            set {
+                fatalError()
+            }
+        }
+
+        public typealias ID = AnyHashable
+        public typealias Body = Never
+    }
+
+    public var startIndex: Int {
+        get {
+            elements.startIndex
+        }
+    }
+
+    public var endIndex: Int {
+        get {
+            elements.endIndex
+        }
+    }
+
+    public subscript(index: Int) -> _VariadicView_Children.Element {
+        get {
+            elements[index]
+        }
+    }
+
+    public typealias Index = Int
+    public typealias Iterator = IndexingIterator<_VariadicView_Children>
+    public typealias SubSequence = Slice<_VariadicView_Children>
+    public typealias Indices = Range<Int>
+}
 
 extension _VariadicView.Tree: View, SomeView
     where Root: _VariadicView_ViewRoot, Content: View {

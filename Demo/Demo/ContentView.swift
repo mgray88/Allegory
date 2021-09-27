@@ -7,41 +7,28 @@
 
 import Allegory
 import CoreGraphics
-import SwiftUI
 
-struct Sample: Allegory.View {
+struct Sample: View {
     var body: SomeView {
-        Allegory.Ellipse()
-        Allegory.Image("")
+        Ellipse()
+        Image("")
             .resizable()
             .scaledToFit()
     }
 }
 
-let sample = SwiftUIView(rootView: Sample())
-
-struct ContentView: SwiftUI.View {
+struct ContentView: View {
     let size = CGSize(width: 300, height: 400)
 
     @State var opacity: Double = 0.5
-    var body: some SwiftUI.View {
+    var body: SomeView {
         VStack {
             ZStack  {
-                SwiftUI.Ellipse()
+                Ellipse()
+                    .background(.red)
                     .frame(width: size.width, height: size.height)
-                    .opacity(1-opacity)
-                sample
-                    .frame(width: size.width, height: size.height)
-                    .opacity(opacity)
             }
-            Slider(value: $opacity, in: 0...1)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some SwiftUI.View {
-        ContentView()
     }
 }

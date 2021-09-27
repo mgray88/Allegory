@@ -2,6 +2,7 @@
 // Created by Mike on 7/29/21.
 //
 
+/// A rectangular shape aligned inside the frame of the view containing it.
 public struct Rectangle: Shape, View {
 
     public init() {}

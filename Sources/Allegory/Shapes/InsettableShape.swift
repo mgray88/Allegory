@@ -6,6 +6,7 @@ public protocol SomeInsettableShape: SomeShape {
     func inset(by amount: CGFloat) -> SomeInsettableShape
 }
 
+/// A shape type that is able to inset itself to produce another shape.
 public protocol InsettableShape: Shape, SomeInsettableShape {
     associatedtype InsetShape: InsettableShape
 

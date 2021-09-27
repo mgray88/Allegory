@@ -114,7 +114,7 @@ private struct ScenePhaseKey: EnvironmentKey {
     static let defaultValue: ScenePhase = .active
 }
 
-public extension EnvironmentValues {
+extension EnvironmentValues {
 
     /// The current phase of the scene.
     ///
@@ -122,7 +122,7 @@ public extension EnvironmentValues {
     /// operational state of a scene or collection of scenes. The exact
     /// meaning depends on where you access the value. For more information,
     /// see ``ScenePhase``.
-    var scenePhase: ScenePhase {
+    public var scenePhase: ScenePhase {
         get {
             self[ScenePhaseKey.self]
         }

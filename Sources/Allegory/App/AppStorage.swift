@@ -51,6 +51,7 @@ internal class UserDefaultLocation<Value> {
 }
 
 extension AppStorage {
+    @inlinable
     public init(
         wrappedValue: Value,
         _ key: String,
@@ -59,6 +60,7 @@ extension AppStorage {
         location = .init(key: key, defaultValue: wrappedValue, store: store)
     }
 
+    @inlinable
     public init(
         wrappedValue: Value,
         _ key: String,
@@ -67,6 +69,7 @@ extension AppStorage {
         location = .init(key: key, defaultValue: wrappedValue, store: store)
     }
 
+    @inlinable
     public init(
         wrappedValue: Value,
         _ key: String,
@@ -75,6 +78,7 @@ extension AppStorage {
         location = .init(key: key, defaultValue: wrappedValue, store: store)
     }
 
+    @inlinable
     public init(
         wrappedValue: Value,
         _ key: String,
@@ -83,6 +87,7 @@ extension AppStorage {
         location = .init(key: key, defaultValue: wrappedValue, store: store)
     }
 
+    @inlinable
     public init(
         wrappedValue: Value,
         _ key: String,
@@ -91,6 +96,7 @@ extension AppStorage {
         location = .init(key: key, defaultValue: wrappedValue, store: store)
     }
 
+    @inlinable
     public init(
         wrappedValue: Value,
         _ key: String,
@@ -99,6 +105,7 @@ extension AppStorage {
         location = .init(key: key, defaultValue: wrappedValue, store: store)
     }
 
+    @inlinable
     public init(
         wrappedValue: Value,
         _ key: String,
@@ -107,6 +114,7 @@ extension AppStorage {
         location = .init(key: key, defaultValue: wrappedValue, store: store)
     }
 
+    @inlinable
     public init(
         wrappedValue: Value,
         _ key: String,
@@ -117,26 +125,32 @@ extension AppStorage {
 }
 
 extension AppStorage where Value: ExpressibleByNilLiteral {
+    @inlinable
     public init(_ key: String, store: UserDefaults? = nil) where Value == Bool? {
         location = .init(key: key, defaultValue: nil, store: store)
     }
 
+    @inlinable
     public init(_ key: String, store: UserDefaults? = nil) where Value == Int? {
         location = .init(key: key, defaultValue: nil, store: store)
     }
 
+    @inlinable
     public init(_ key: String, store: UserDefaults? = nil) where Value == Double? {
         location = .init(key: key, defaultValue: nil, store: store)
     }
 
+    @inlinable
     public init(_ key: String, store: UserDefaults? = nil) where Value == String? {
         location = .init(key: key, defaultValue: nil, store: store)
     }
 
+    @inlinable
     public init(_ key: String, store: UserDefaults? = nil) where Value == URL? {
         location = .init(key: key, defaultValue: nil, store: store)
     }
 
+    @inlinable
     public init(_ key: String, store: UserDefaults? = nil) where Value == Data? {
         location = .init(key: key, defaultValue: nil, store: store)
     }
@@ -144,6 +158,7 @@ extension AppStorage where Value: ExpressibleByNilLiteral {
 }
 
 extension AppStorage {
+    @inlinable
     public init<R>(
         _ key: String,
         store: UserDefaults? = nil
@@ -151,6 +166,7 @@ extension AppStorage {
         location = .init(key: key, defaultValue: nil, store: store)
     }
 
+    @inlinable
     public init<R>(
         _ key: String,
         store: UserDefaults? = nil

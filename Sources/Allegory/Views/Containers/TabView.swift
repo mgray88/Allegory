@@ -39,29 +39,19 @@ import UIKit
 public struct TabView<SelectionValue, Content>: View
     where SelectionValue: Hashable, Content: View {
 
-    @usableFromInline
-    internal let _tree: _VariadicView.Tree<UIKitTabView, Content>
-
     /// Creates an instance that selects from content associated with
     /// `Selection` values.
     public init(
         selection: Binding<SelectionValue>?,
         @ViewBuilder content: () -> Content
     ) {
-        _tree = .init(
-            root: .init(),
-            content: content()
-        )
     }
 }
 
 extension TabView where SelectionValue == Int {
 
     public init(@ViewBuilder content: () -> Content) {
-        _tree = .init(
-            root: .init(),
-            content: content()
-        )
+        self.init(selection: nil, content: content)
     }
 }
 
@@ -71,7 +61,7 @@ extension TabView: UIKitNodeResolvable {
             "TabView"
         }
 
-        let tabBar = UIKitTabView()
+        let tabBar = UITabBarController()
 
         func update(view: TabView<SelectionValue, Content>, context: Context) {
         }
@@ -99,29 +89,30 @@ extension TabView: UIKitNodeResolvable {
     }
 }
 
-public class UIKitTabView: UITabBarController, UITabBarControllerDelegate {
-    init() {
-        super.init(nibName: nil, bundle: nil)
-        self.delegate = self
-        let orders = UIHostingController(rootView: Text("Orders"))
-        orders.tabBarItem = .init(title: "Orders", image: nil, tag: 0)
-        let zStack = UIHostingController(rootView: Text("ZStack"))
-        zStack.tabBarItem = .init(title: "ZStack", image: nil, tag: 1)
-        viewControllers = [
-            orders,
-            zStack
-        ]
-        tabBar.barTintColor = .white
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    public override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        super.tabBar(tabBar, didSelect: item)
-    }
-}
-
-extension UIKitTabView: _VariadicView_UnaryViewRoot {}
+//public class UIKitTabView<Tabs: RandomAccessCollection>: UITabBarController, UITabBarControllerDelegate
+//    where Tabs == LazyMapSequence<_VariadicView_Children, _TabItem> {
+//    init() {
+//        super.init(nibName: nil, bundle: nil)
+//        self.delegate = self
+//        let orders = UIHostingController(rootView: Text("Orders"))
+//        orders.tabBarItem = .init(title: "Orders", image: nil, tag: 0)
+//        let zStack = UIHostingController(rootView: Text("ZStack"))
+//        zStack.tabBarItem = .init(title: "ZStack", image: nil, tag: 1)
+//        viewControllers = [
+//            orders,
+//            zStack
+//        ]
+//        tabBar.barTintColor = .white
+//    }
+//
+//    @available(*, unavailable)
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+//
+//    public override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+//        super.tabBar(tabBar, didSelect: item)
+//    }
+//}
+//
+//extension UIKitTabView: _VariadicView_UnaryViewRoot {}
